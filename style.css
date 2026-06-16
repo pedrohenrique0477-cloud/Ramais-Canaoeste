@@ -42,8 +42,8 @@ body {
 }
 
 .logo {
-  height: 58px;
-  max-width: 280px;
+  height: 78px;
+  max-width: 380px;
   object-fit: contain;
   filter: brightness(0) invert(1);
 }
