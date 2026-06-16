@@ -101,10 +101,14 @@ const dadosIniciais = {
 
   "Departamento Técnico": [
     { ramal: "113", nome: "Alessandra Durigan", cargo: "Gestora Operacional", tipo: "Fone", observacao: "" },
+    { ramal: "1013", nome: "Alessandra Durigan", cargo: "Gestora Operacional", tipo: "Móvel", observacao: "" },
+    { ramal: "1113", nome: "Alessandra Durigan", cargo: "Gestora Operacional", tipo: "PC", observacao: "" },
     { ramal: "157", nome: "André Volpe", cargo: "Gestor Operacional", tipo: "Fone", observacao: "" },
 
     { ramal: "100", nome: "Adalita Andreata", cargo: "Secretária Sertãozinho", tipo: "Fone", observacao: "" },
     { ramal: "114", nome: "Victor Prati", cargo: "Agrônomo Sertãozinho", tipo: "Fone", observacao: "" },
+    { ramal: "1014", nome: "Victor Prati", cargo: "Agrônomo Sertãozinho", tipo: "Móvel", observacao: "" },
+    { ramal: "1114", nome: "Victor Prati", cargo: "Agrônomo Sertãozinho", tipo: "PC", observacao: "" },
 
     { ramal: "200", nome: "Elaine Chrispim", cargo: "Secretária Cravinhos", tipo: "Fone", observacao: "" },
     { ramal: "201", nome: "Marco Polegato", cargo: "Agrônomo Cravinhos", tipo: "Fone", observacao: "" },
@@ -119,6 +123,7 @@ const dadosIniciais = {
     { ramal: "216", nome: "Felipe Volpe", cargo: "Agrônomo Pitangueiras", tipo: "Fone", observacao: "" },
 
     { ramal: "220", nome: "Rose de Oliveira", cargo: "Secretária Bebedouro", tipo: "Fone", observacao: "" },
+    { ramal: "2120", nome: "Rose de Oliveira", cargo: "Secretária Bebedouro", tipo: "Móvel", observacao: "" },
     { ramal: "221", nome: "Felipe Volpe", cargo: "Agrônomo Bebedouro", tipo: "Fone", observacao: "" },
 
     { ramal: "225", nome: "Juliana Leite", cargo: "Secretária Viradouro", tipo: "Fone", observacao: "" },
@@ -136,9 +141,16 @@ const dadosIniciais = {
 
     { ramal: "250", nome: "Joice Mantovani", cargo: "Secretária Severínia", tipo: "Fone", observacao: "" },
     { ramal: "251", nome: "Ivan Tilelli Burjaili", cargo: "Agrônomo Severínia", tipo: "Fone", observacao: "" },
+    { ramal: "2051", nome: "Ivan Tilelli Burjaili", cargo: "Agrônomo Severínia", tipo: "Móvel", observacao: "" },
 
     { ramal: "255", nome: "Ariele M. Lima de Castro", cargo: "Secretária Catanduva", tipo: "Fone", observacao: "" },
+    { ramal: "1255", nome: "Ariele M. Lima de Castro", cargo: "Secretária Catanduva", tipo: "Móvel", observacao: "" },
+    { ramal: "2255", nome: "Ariele M. Lima de Castro", cargo: "Secretária Catanduva", tipo: "PC", observacao: "" },
+
     { ramal: "256", nome: "Aderbal José Turin", cargo: "Geo Catanduva", tipo: "Fone", observacao: "" },
+    { ramal: "1256", nome: "Aderbal José Turin", cargo: "Geo Catanduva", tipo: "Móvel", observacao: "" },
+    { ramal: "2256", nome: "Aderbal José Turin", cargo: "Geo Catanduva", tipo: "PC", observacao: "" },
+
     { ramal: "2256", nome: "Marcelo Colla", cargo: "Jurídico Catanduva", tipo: "Fone", observacao: "" }
   ]
 };
@@ -426,15 +438,15 @@ btnSalvarCategoria.addEventListener("click", () => {
   }
 
   ramaisRef.child(nome).set({
-    vazio: {
-      nome: "",
-      ramal: "",
+    temporario: {
+      nome: "Temporário",
+      ramal: "000",
       cargo: "",
       tipo: "Fone",
       observacao: ""
     }
   }).then(() => {
-    return ramaisRef.child(nome).child("vazio").remove();
+    return ramaisRef.child(nome).child("temporario").remove();
   }).then(() => {
     registrarUltimaAtualizacao();
     modalCategoria.classList.remove("aberto");
@@ -601,8 +613,15 @@ function converterParaArray(obj) {
 
 function ordenarCategorias(categorias) {
   return categorias.sort((a, b) => {
-    if (a.toLowerCase() === "diretoria") return -1;
-    if (b.toLowerCase() === "diretoria") return 1;
+    const categoriaA = a.toLowerCase();
+    const categoriaB = b.toLowerCase();
+
+    if (categoriaA === "diretoria") return -1;
+    if (categoriaB === "diretoria") return 1;
+
+    if (categoriaA === "departamento técnico") return 1;
+    if (categoriaB === "departamento técnico") return -1;
+
     return a.localeCompare(b, "pt-BR");
   });
 }
