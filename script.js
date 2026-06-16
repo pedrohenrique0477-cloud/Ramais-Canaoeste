@@ -269,14 +269,14 @@ function renderizarRamais() {
         <h2>${escaparHtml(categoria)}</h2>
 
         <div class="categoria-acoes">
-          <button class="btn-pequeno" onclick="abrirModalAdicionarPessoa('${escaparAspas(categoria)}')">
-            + Adicionar
-          </button>
+  <button class="btn-toggle btn-mostrar-destaque" onclick="alternarCategoria('${escaparAspas(categoria)}')">
+    ${recolhida ? "Mostrar" : "Ocultar"}
+  </button>
 
-          <button class="btn-toggle" onclick="alternarCategoria('${escaparAspas(categoria)}')">
-            ${recolhida ? "Mostrar" : "Ocultar"}
-          </button>
-        </div>
+  <button class="btn-pequeno btn-adicionar-menor" onclick="abrirModalAdicionarPessoa('${escaparAspas(categoria)}')">
+    + Adicionar
+  </button>
+</div>
       </div>
 
       <div class="conteudo-categoria" style="display: ${recolhida ? "none" : "block"}">
@@ -638,3 +638,22 @@ modalPessoa.addEventListener("click", evento => {
     modalPessoa.classList.remove("aberto");
   }
 });
+
+.btn-mostrar-destaque {
+  background: #009879;
+  font-weight: bold;
+  min-width: 86px;
+}
+
+.btn-mostrar-destaque:hover {
+  background: #007b63;
+}
+
+.btn-adicionar-menor {
+  background: rgba(255, 255, 255, 0.22);
+  font-weight: bold;
+}
+
+.btn-adicionar-menor:hover {
+  background: rgba(255, 255, 255, 0.34);
+}
