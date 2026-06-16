@@ -1,8 +1,8 @@
 :root {
-  --verde-principal: #009879;
-  --verde-escuro: #007b63;
+  --verde-principal: #00775C;
+  --verde-escuro: #00634d;
   --verde-claro: #b8dcb0;
-  --azul-tabela: #078a9b;
+  --azul-tabela: #004C75;
   --fundo: #f4f7f6;
   --branco: #ffffff;
   --texto: #1f2933;
@@ -228,15 +228,15 @@ select:focus {
 
 .card-categoria.diretoria {
   grid-column: 1 / -1;
-  border: 3px solid var(--verde-principal);
+  border: 3px solid #00775C;
 }
 
 .card-categoria.diretoria .categoria-topo {
-  background: linear-gradient(90deg, var(--verde-principal), var(--verde-escuro));
+  background: #00775C;
 }
 
 .categoria-topo {
-  background: var(--azul-tabela);
+  background: #004C75;
   color: white;
   padding: 12px 14px;
   display: flex;
