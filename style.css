@@ -30,7 +30,7 @@ body {
   background: var(--verde-principal);
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   padding: 0 18px;
 }
 
@@ -41,38 +41,10 @@ body {
 }
 
 .logo {
-  height: 78px;
-  max-width: 320px;
+  height: 82px;
+  max-width: 340px;
   object-fit: contain;
-
-  /* deixa a logo branca mantendo o fundo transparente */
   filter: brightness(0) invert(1);
-}
-
-.btn-menu,
-.btn-sair {
-  border: none;
-  color: white;
-  background: rgba(255, 255, 255, 0.18);
-  cursor: pointer;
-  border-radius: 8px;
-  transition: 0.2s;
-}
-
-.btn-menu {
-  font-size: 32px;
-  width: 48px;
-  height: 48px;
-}
-
-.btn-sair {
-  font-size: 15px;
-  padding: 11px 18px;
-}
-
-.btn-menu:hover,
-.btn-sair:hover {
-  background: rgba(255, 255, 255, 0.3);
 }
 
 .faixa-verde {
@@ -104,6 +76,16 @@ body {
 .cabecalho-pagina p {
   margin: 6px 0 0;
   color: var(--cinza);
+}
+
+.ultima-atualizacao {
+  margin: 6px 0 0;
+  font-size: 14px;
+  color: #64748b;
+}
+
+.ultima-atualizacao strong {
+  color: #007b63;
 }
 
 /* FILTROS */
@@ -183,12 +165,30 @@ button {
 
 .btn-pequeno {
   border: none;
-  background: var(--verde-principal);
   color: white;
   padding: 8px 11px;
   border-radius: 8px;
   cursor: pointer;
   font-weight: bold;
+}
+
+/* BOTÕES DO TOPO DA CATEGORIA */
+
+.btn-mostrar-destaque {
+  background: var(--verde-principal);
+  min-width: 82px;
+}
+
+.btn-mostrar-destaque:hover {
+  background: var(--verde-escuro);
+}
+
+.btn-adicionar-menor {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.btn-adicionar-menor:hover {
+  background: rgba(255, 255, 255, 0.34);
 }
 
 /* INPUTS */
@@ -256,15 +256,6 @@ select:focus {
   align-items: center;
 }
 
-.btn-toggle {
-  border: none;
-  background: rgba(255, 255, 255, 0.22);
-  color: white;
-  padding: 7px 10px;
-  border-radius: 7px;
-  cursor: pointer;
-}
-
 .conteudo-categoria {
   padding: 12px;
 }
@@ -321,7 +312,9 @@ select:focus {
 }
 
 .col-acoes {
-  width: 150px;
+  width: 130px;
+  min-width: 130px;
+  max-width: 130px;
   text-align: center;
 }
 
@@ -342,6 +335,11 @@ select:focus {
 }
 
 .tabela-ramais td.col-acoes {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.acoes-botoes {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -354,6 +352,11 @@ select:focus {
 
 .cargo-pessoa {
   color: var(--cinza);
+}
+
+.cargo-vazio {
+  color: #94a3b8;
+  font-style: italic;
 }
 
 .tag-tipo {
@@ -377,64 +380,6 @@ select:focus {
   text-align: center;
   color: var(--cinza);
   font-size: 18px;
-}
-
-/* MENU LATERAL */
-
-.menu-lateral {
-  position: fixed;
-  top: 0;
-  left: -320px;
-  width: 300px;
-  height: 100vh;
-  background: white;
-  z-index: 20;
-  box-shadow: var(--sombra);
-  transition: 0.25s;
-  padding: 18px;
-}
-
-.menu-lateral.aberto {
-  left: 0;
-}
-
-.menu-cabecalho {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.menu-cabecalho h2 {
-  color: var(--verde-escuro);
-}
-
-.menu-cabecalho button {
-  border: none;
-  background: #f1f5f9;
-  font-size: 25px;
-  width: 38px;
-  height: 38px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.menu-lateral nav {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.menu-lateral a {
-  text-decoration: none;
-  color: var(--texto);
-  padding: 11px;
-  border-radius: 8px;
-  background: #f8fafc;
-}
-
-.menu-lateral a:hover {
-  background: #e8f7f4;
-  color: var(--verde-escuro);
 }
 
 /* MODAL */
@@ -536,10 +481,8 @@ select:focus {
   }
 
   .logo {
-    height: 90px;
-    max-width: 360px;
-    object-fit: contain;
-    filter: brightness(0) invert(1);
+    height: 60px;
+    max-width: 230px;
   }
 
   .container {
@@ -561,49 +504,6 @@ select:focus {
   }
 
   .col-acoes {
-    min-width: 140px;
+    min-width: 130px;
   }
-}
-
-.tabela-ramais th.col-acoes,
-.tabela-ramais td.col-acoes {
-  text-align: center;
-}
-
-.tabela-ramais td.col-acoes {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-}
-
-.tabela-ramais th.col-acoes,
-.tabela-ramais td.col-acoes {
-  width: 130px;
-  min-width: 130px;
-  max-width: 130px;
-  text-align: center;
-}
-
-.tabela-ramais td.col-acoes {
-  display: table-cell;
-  vertical-align: middle;
-}
-
-.tabela-ramais td.col-acoes .acoes-botoes {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-}
-
-.ultima-atualizacao {
-  margin: 6px 0 0;
-  font-size: 14px;
-  color: #64748b;
-}
-
-.ultima-atualizacao strong {
-  color: #007b63;
 }
