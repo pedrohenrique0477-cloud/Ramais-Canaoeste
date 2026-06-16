@@ -10,6 +10,7 @@ firebase.initializeApp(firebaseConfig);
 
 const db = firebase.database();
 const ramaisRef = db.ref("ramais_canaoeste");
+const atualizacaoRef = db.ref("ultima_atualizacao_ramais");
 
 // ===============================
 // DADOS INICIAIS
@@ -176,34 +177,27 @@ const campoObservacao = document.getElementById("campoObservacao");
 const btnCancelarPessoa = document.getElementById("btnCancelarPessoa");
 const btnSalvarPessoa = document.getElementById("btnSalvarPessoa");
 
-const toast = document.getElementById("toast");
-
-const btnMenu = document.getElementById("btnMenu");
-const btnFecharMenu = document.getElementById("btnFecharMenu");
-const menuLateral = document.getElementById("menuLateral");
-const listaCategoriasMenu = document.getElementById("listaCategoriasMenu");
-
 const btnExpandirTudo = document.getElementById("btnExpandirTudo");
 const btnRecolherTudo = document.getElementById("btnRecolherTudo");
-const btnSair = document.getElementById("btnSair");
 const ultimaAtualizacao = document.getElementById("ultimaAtualizacao");
-const atualizacaoRef = db.ref("ultima_atualizacao_ramais");
+const toast = document.getElementById("toast");
 
 // ===============================
-// INICIAR
+// INICIAR FIREBASE
 // ===============================
 
 ramaisRef.once("value").then(snapshot => {
   if (!snapshot.exists()) {
     ramaisRef.set(dadosIniciais);
+    registrarUltimaAtualizacao();
   }
 });
 
 ramaisRef.on("value", snapshot => {
   dadosRamais = snapshot.val() || {};
   renderizarRamais();
-  renderizarMenu();
 });
+
 atualizacaoRef.on("value", snapshot => {
   const data = snapshot.val();
 
@@ -212,9 +206,7 @@ atualizacaoRef.on("value", snapshot => {
     return;
   }
 
-  ultimaAtualizacao.innerHTML = `
-    Última atualização: <strong>${formatarDataHora(data)}</strong>
-  `;
+  ultimaAtualizacao.innerHTML = `Última atualização: <strong>${formatarDataHora(data)}</strong>`;
 });
 
 // ===============================
@@ -263,20 +255,29 @@ function renderizarRamais() {
     }
 
     const recolhida = categoriasRecolhidas[categoria] === true;
+    const textoBotaoMostrar = recolhida ? "Mostrar" : "Ocultar";
 
     card.innerHTML = `
       <div class="categoria-topo">
         <h2>${escaparHtml(categoria)}</h2>
 
         <div class="categoria-acoes">
-  <button class="btn-toggle btn-mostrar-destaque" onclick="alternarCategoria('${escaparAspas(categoria)}')">
-    ${recolhida ? "Mostrar" : "Ocultar"}
-  </button>
+          <button 
+            class="btn-pequeno btn-mostrar-destaque" 
+            data-acao="alternar" 
+            data-categoria="${escaparHtml(categoria)}"
+          >
+            ${textoBotaoMostrar}
+          </button>
 
-  <button class="btn-pequeno btn-adicionar-menor" onclick="abrirModalAdicionarPessoa('${escaparAspas(categoria)}')">
-    + Adicionar
-  </button>
-</div>
+          <button 
+            class="btn-pequeno btn-adicionar-menor" 
+            data-acao="adicionar" 
+            data-categoria="${escaparHtml(categoria)}"
+          >
+            + Adicionar
+          </button>
+        </div>
       </div>
 
       <div class="conteudo-categoria" style="display: ${recolhida ? "none" : "block"}">
@@ -298,34 +299,48 @@ function montarTabela(categoria, pessoas) {
   }
 
   const linhas = pessoas.map(pessoa => {
+    const cargo = pessoa.cargo
+      ? `<div class="cargo-pessoa">${escaparHtml(pessoa.cargo)}</div>`
+      : `<div class="cargo-vazio">Sem função informada</div>`;
+
     return `
       <tr>
         <td class="col-ramal">${escaparHtml(pessoa.ramal || "")}</td>
 
-<td class="col-nome">
-  <div class="nome-pessoa">${escaparHtml(pessoa.nome || "")}</div>
-  ${pessoa.observacao ? `<div class="cargo-pessoa">${escaparHtml(pessoa.observacao)}</div>` : ""}
-</td>
+        <td class="col-nome">
+          <div class="nome-pessoa">${escaparHtml(pessoa.nome || "")}</div>
+          ${pessoa.observacao ? `<div class="cargo-pessoa">${escaparHtml(pessoa.observacao)}</div>` : ""}
+        </td>
 
-<td class="col-cargo">
-  <div class="cargo-pessoa">${escaparHtml(pessoa.cargo || "")}</div>
-</td>
+        <td class="col-cargo">
+          ${cargo}
+        </td>
 
-<td class="col-tipo">
-  <span class="tag-tipo">${escaparHtml(pessoa.tipo || "Fone")}</span>
-</td>
+        <td class="col-tipo">
+          <span class="tag-tipo">${escaparHtml(pessoa.tipo || "Fone")}</span>
+        </td>
 
-<td class="col-acoes">
-  <div class="acoes-botoes">
-    <button class="btn-editar" onclick="abrirModalEditarPessoa('${escaparAspas(categoria)}', '${pessoa.id}')">
-      Editar
-    </button>
+        <td class="col-acoes">
+          <div class="acoes-botoes">
+            <button 
+              class="btn-editar" 
+              data-acao="editar" 
+              data-categoria="${escaparHtml(categoria)}" 
+              data-id="${escaparHtml(pessoa.id)}"
+            >
+              Editar
+            </button>
 
-    <button class="btn-perigo" onclick="excluirPessoa('${escaparAspas(categoria)}', '${pessoa.id}')">
-      Excluir
-    </button>
-  </div>
-</td>
+            <button 
+              class="btn-perigo" 
+              data-acao="excluir" 
+              data-categoria="${escaparHtml(categoria)}" 
+              data-id="${escaparHtml(pessoa.id)}"
+            >
+              Excluir
+            </button>
+          </div>
+        </td>
       </tr>
     `;
   }).join("");
@@ -335,12 +350,12 @@ function montarTabela(categoria, pessoas) {
       <table class="tabela-ramais">
         <thead>
           <tr>
-  <th class="col-ramal">Ramal</th>
-  <th class="col-nome">Nome</th>
-  <th class="col-cargo">Função / Cargo</th>
-  <th class="col-tipo">Tipo</th>
-  <th class="col-acoes">Ações</th>
-</tr>
+            <th class="col-ramal">Ramal</th>
+            <th class="col-nome">Nome</th>
+            <th class="col-cargo">Função / Cargo</th>
+            <th class="col-tipo">Tipo</th>
+            <th class="col-acoes">Ações</th>
+          </tr>
         </thead>
 
         <tbody>
@@ -351,23 +366,37 @@ function montarTabela(categoria, pessoas) {
   `;
 }
 
-function renderizarMenu() {
-  listaCategoriasMenu.innerHTML = "";
+// ===============================
+// CLIQUES NA ÁREA DOS RAMAIS
+// ===============================
 
-  const categorias = ordenarCategorias(Object.keys(dadosRamais));
+areaRamais.addEventListener("click", evento => {
+  const botao = evento.target.closest("button");
 
-  categorias.forEach(categoria => {
-    const link = document.createElement("a");
-    link.href = `#${criarIdCategoria(categoria)}`;
-    link.textContent = categoria;
+  if (!botao) {
+    return;
+  }
 
-    link.addEventListener("click", () => {
-      menuLateral.classList.remove("aberto");
-    });
+  const acao = botao.dataset.acao;
+  const categoria = botao.dataset.categoria;
+  const id = botao.dataset.id;
 
-    listaCategoriasMenu.appendChild(link);
-  });
-}
+  if (acao === "alternar") {
+    alternarCategoria(categoria);
+  }
+
+  if (acao === "adicionar") {
+    abrirModalAdicionarPessoa(categoria);
+  }
+
+  if (acao === "editar") {
+    abrirModalEditarPessoa(categoria, id);
+  }
+
+  if (acao === "excluir") {
+    excluirPessoa(categoria, id);
+  }
+});
 
 // ===============================
 // CATEGORIAS
@@ -396,11 +425,21 @@ btnSalvarCategoria.addEventListener("click", () => {
     return;
   }
 
-  ramaisRef.child(nome).set([]);
-registrarUltimaAtualizacao();
-
-modalCategoria.classList.remove("aberto");
-mostrarToast("Categoria criada com sucesso.");
+  ramaisRef.child(nome).set({
+    vazio: {
+      nome: "",
+      ramal: "",
+      cargo: "",
+      tipo: "Fone",
+      observacao: ""
+    }
+  }).then(() => {
+    return ramaisRef.child(nome).child("vazio").remove();
+  }).then(() => {
+    registrarUltimaAtualizacao();
+    modalCategoria.classList.remove("aberto");
+    mostrarToast("Categoria criada com sucesso.");
+  });
 });
 
 // ===============================
@@ -425,7 +464,7 @@ function abrirModalAdicionarPessoa(categoria) {
 }
 
 function abrirModalEditarPessoa(categoria, pessoaId) {
-  const pessoa = dadosRamais[categoria][pessoaId];
+  const pessoa = dadosRamais[categoria] && dadosRamais[categoria][pessoaId];
 
   if (!pessoa) {
     mostrarToast("Ramal não encontrado.");
@@ -474,30 +513,41 @@ btnSalvarPessoa.addEventListener("click", () => {
     return;
   }
 
+  let acaoFirebase;
+
   if (pessoaId) {
-  ramaisRef.child(categoria).child(pessoaId).update(pessoa);
-  mostrarToast("Ramal atualizado com sucesso.");
-} else {
-  ramaisRef.child(categoria).push(pessoa);
-  mostrarToast("Ramal adicionado com sucesso.");
-}
+    acaoFirebase = ramaisRef.child(categoria).child(pessoaId).update(pessoa);
+  } else {
+    acaoFirebase = ramaisRef.child(categoria).push(pessoa);
+  }
 
-registrarUltimaAtualizacao();
+  acaoFirebase.then(() => {
+    registrarUltimaAtualizacao();
 
-modalPessoa.classList.remove("aberto");
+    if (pessoaId) {
+      mostrarToast("Ramal atualizado com sucesso.");
+    } else {
+      mostrarToast("Ramal adicionado com sucesso.");
+    }
+
+    modalPessoa.classList.remove("aberto");
+  });
 });
 
 function excluirPessoa(categoria, pessoaId) {
-  const confirmar = confirm("Tem certeza que deseja excluir este ramal?");
+  const pessoa = dadosRamais[categoria] && dadosRamais[categoria][pessoaId];
+  const nome = pessoa && pessoa.nome ? pessoa.nome : "este ramal";
+
+  const confirmar = confirm(`Tem certeza que deseja excluir ${nome}?`);
 
   if (!confirmar) {
     return;
   }
 
-  ramaisRef.child(categoria).child(pessoaId).remove();
-registrarUltimaAtualizacao();
-
-mostrarToast("Ramal excluído.");
+  ramaisRef.child(categoria).child(pessoaId).remove().then(() => {
+    registrarUltimaAtualizacao();
+    mostrarToast("Ramal excluído.");
+  });
 }
 
 // ===============================
@@ -528,45 +578,25 @@ btnRecolherTudo.addEventListener("click", () => {
 });
 
 // ===============================
-// MENU
-// ===============================
-
-btnMenu.addEventListener("click", () => {
-  menuLateral.classList.add("aberto");
-});
-
-btnFecharMenu.addEventListener("click", () => {
-  menuLateral.classList.remove("aberto");
-});
-
-// ===============================
-// BOTÃO SAIR
-// ===============================
-
-btnSair.addEventListener("click", () => {
-  const confirmar = confirm("Deseja sair da página de ramais?");
-
-  if (confirmar) {
-    window.location.href = "about:blank";
-  }
-});
-
-// ===============================
 // UTILITÁRIOS
 // ===============================
 
 function converterParaArray(obj) {
   if (Array.isArray(obj)) {
-    return obj.map((item, index) => ({
-      id: index,
-      ...item
-    }));
+    return obj
+      .filter(item => item && item.nome)
+      .map((item, index) => ({
+        id: String(index),
+        ...item
+      }));
   }
 
-  return Object.keys(obj || {}).map(id => ({
-    id,
-    ...obj[id]
-  }));
+  return Object.keys(obj || {})
+    .filter(id => obj[id] && obj[id].nome)
+    .map(id => ({
+      id,
+      ...obj[id]
+    }));
 }
 
 function ordenarCategorias(categorias) {
@@ -603,12 +633,6 @@ function escaparHtml(texto) {
     .replaceAll("'", "&#039;");
 }
 
-function escaparAspas(texto) {
-  return String(texto)
-    .replaceAll("\\", "\\\\")
-    .replaceAll("'", "\\'");
-}
-
 function registrarUltimaAtualizacao() {
   const agora = new Date().toISOString();
   atualizacaoRef.set(agora);
@@ -627,6 +651,7 @@ function formatarDataHora(dataISO) {
 }
 
 // Fecha modal clicando fora
+
 modalCategoria.addEventListener("click", evento => {
   if (evento.target === modalCategoria) {
     modalCategoria.classList.remove("aberto");
@@ -638,22 +663,3 @@ modalPessoa.addEventListener("click", evento => {
     modalPessoa.classList.remove("aberto");
   }
 });
-
-.btn-mostrar-destaque {
-  background: #009879;
-  font-weight: bold;
-  min-width: 86px;
-}
-
-.btn-mostrar-destaque:hover {
-  background: #007b63;
-}
-
-.btn-adicionar-menor {
-  background: rgba(255, 255, 255, 0.22);
-  font-weight: bold;
-}
-
-.btn-adicionar-menor:hover {
-  background: rgba(255, 255, 255, 0.34);
-}
