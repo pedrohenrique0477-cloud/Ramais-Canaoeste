@@ -554,3 +554,31 @@ select:focus {
     gap: 3px;
   }
 }
+
+/* DIRETORIA COM FUNDO VERDE IGUAL AO TÓPICO */
+
+.card-categoria.diretoria .tabela-ramais th {
+  background: #00775C;
+  color: white;
+  border-color: #1f2933;
+}
+
+.card-categoria.diretoria .tabela-ramais td {
+  background: #00775C;
+  color: white;
+  border-color: #1f2933;
+}
+
+.card-categoria.diretoria .nome-pessoa,
+.card-categoria.diretoria .cargo-pessoa,
+.card-categoria.diretoria .tag-tipo {
+  color: white;
+}
+
+.card-categoria.diretoria .cargo-vazio {
+  color: #d8f3ec;
+}
+
+.card-categoria.diretoria .tabela-ramais tr:hover td {
+  background: #006b53;
+}
