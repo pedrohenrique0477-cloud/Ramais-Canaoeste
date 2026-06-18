@@ -650,9 +650,9 @@ body:not(.modo-editor) .col-tipo {
 }
 
 .tabela-ramais tbody tr:nth-child(even) td {
-  background: #f0f6f5;
+  background: #d9e8e6;
 }
 
 .tabela-ramais tbody tr:hover td {
-  background: #dcefeb;
+  background: #c2dcd8;
 }
