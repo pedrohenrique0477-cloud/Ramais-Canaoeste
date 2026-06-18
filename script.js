@@ -3,14 +3,23 @@
 // ===============================
 
 const firebaseConfig = {
-  databaseURL: "https://ramaiscanaoeste-default-rtdb.firebaseio.com/"
+  apiKey: "AIzaSyBUsc9ZrkfKRaVDVM53ew1JnwbbH1_ARuQ",
+  authDomain: "ramaiscanaoeste.firebaseapp.com",
+  databaseURL: "https://ramaiscanaoeste-default-rtdb.firebaseio.com",
+  projectId: "ramaiscanaoeste",
+  storageBucket: "ramaiscanaoeste.firebasestorage.app",
+  messagingSenderId: "1013260478239",
+  appId: "1:1013260478239:web:4a7c90f17089313d61f22a"
 };
 
 firebase.initializeApp(firebaseConfig);
 
 const db = firebase.database();
+const auth = firebase.auth();
+
 const ramaisRef = db.ref("ramais_canaoeste");
 const atualizacaoRef = db.ref("ultima_atualizacao_ramais");
+const editoresRef = db.ref("editores");
 
 // ===============================
 // DADOS INICIAIS
@@ -43,15 +52,19 @@ const dadosIniciais = {
 
   "Administrativo": [
     { ramal: "105", nome: "Edson Mussa", cargo: "Coordenador", tipo: "Fone", observacao: "" },
+    { ramal: "1105", nome: "Edson Mussa", cargo: "Coordenador", tipo: "PC", observacao: "" },
     { ramal: "134", nome: "Júlia Perticarrari", cargo: "Jovem Aprendiz", tipo: "Fone", observacao: "" },
     { ramal: "106", nome: "Daiane Serafim", cargo: "", tipo: "Fone", observacao: "" },
     { ramal: "108", nome: "Gabriel Santos", cargo: "Recursos Humanos", tipo: "Fone", observacao: "" },
+    { ramal: "1108", nome: "Gabriel Santos", cargo: "Recursos Humanos", tipo: "PC", observacao: "" },
     { ramal: "107", nome: "José Alberto", cargo: "", tipo: "Fone", observacao: "" },
-    { ramal: "109", nome: "Ruth Neudielle", cargo: "Financeiro", tipo: "Fone", observacao: "" }
+    { ramal: "109", nome: "Ruth Neudielle", cargo: "Financeiro", tipo: "Fone", observacao: "" },
+    { ramal: "1109", nome: "Ruth Neudielle", cargo: "Financeiro", tipo: "PC", observacao: "" }
   ],
 
   "Comunicação e Marketing": [
     { ramal: "110", nome: "Lucas Figueiredo", cargo: "Coordenador", tipo: "Fone", observacao: "" },
+    { ramal: "1010", nome: "Lucas Figueiredo", cargo: "Coordenador", tipo: "Móvel", observacao: "" },
     { ramal: "111", nome: "Ludmila Haikal Rizzi", cargo: "", tipo: "Fone", observacao: "" },
     { ramal: "132", nome: "Ana Lívia", cargo: "", tipo: "Fone", observacao: "" },
     { ramal: "133", nome: "Kelvin Oliveira", cargo: "Jovem Aprendiz", tipo: "PC", observacao: "" }
@@ -59,8 +72,13 @@ const dadosIniciais = {
 
   "CanaoesteBio": [
     { ramal: "151", nome: "André Volpe", cargo: "Gestor Operacional", tipo: "Fone", observacao: "" },
-    { ramal: "1150", nome: "Murilo Lopes", cargo: "", tipo: "Fone", observacao: "" },
+    { ramal: "1051", nome: "André Volpe", cargo: "Gestor Operacional", tipo: "Móvel", observacao: "" },
+    { ramal: "1151", nome: "André Volpe", cargo: "Gestor Operacional", tipo: "PC", observacao: "" },
+    { ramal: "150", nome: "Murilo Lopes", cargo: "", tipo: "Fone", observacao: "" },
+    { ramal: "1150", nome: "Murilo Lopes", cargo: "", tipo: "PC", observacao: "" },
+    { ramal: "1250", nome: "Murilo Lopes", cargo: "", tipo: "Móvel", observacao: "" },
     { ramal: "152", nome: "Maysa Corrêa", cargo: "Laboratório", tipo: "Fone", observacao: "" },
+    { ramal: "156", nome: "Maysa Corrêa", cargo: "Laboratório", tipo: "Fone", observacao: "" },
     { ramal: "153", nome: "Sala de Reunião", cargo: "", tipo: "Fone", observacao: "" },
     { ramal: "154", nome: "Fábrica", cargo: "", tipo: "Fone", observacao: "" },
     { ramal: "155", nome: "Casa de Máquina", cargo: "", tipo: "Fone", observacao: "" }
@@ -84,8 +102,12 @@ const dadosIniciais = {
   ],
 
   "Ambiental": [
-    { ramal: "1021", nome: "Fábio Soldera", cargo: "Gestor Operacional", tipo: "Fone", observacao: "" },
-    { ramal: "1122", nome: "Ricardo Vaz", cargo: "", tipo: "Fone", observacao: "" },
+    { ramal: "121", nome: "Fábio Soldera", cargo: "Gestor Operacional", tipo: "Fone", observacao: "" },
+    { ramal: "1021", nome: "Fábio Soldera", cargo: "Gestor Operacional", tipo: "Móvel", observacao: "" },
+    { ramal: "1121", nome: "Fábio Soldera", cargo: "Gestor Operacional", tipo: "PC", observacao: "" },
+    { ramal: "122", nome: "Ricardo Vaz", cargo: "", tipo: "Fone", observacao: "" },
+    { ramal: "1022", nome: "Ricardo Vaz", cargo: "", tipo: "Móvel", observacao: "" },
+    { ramal: "1122", nome: "Ricardo Vaz", cargo: "", tipo: "PC", observacao: "" },
     { ramal: "126", nome: "Guilherme Di Bianco", cargo: "", tipo: "Fone", observacao: "" },
     { ramal: "127", nome: "Marcelo Tová", cargo: "", tipo: "Fone", observacao: "" },
     { ramal: "135", nome: "Guilherme Santos", cargo: "Jovem Aprendiz", tipo: "Fone", observacao: "" },
@@ -162,6 +184,8 @@ const dadosIniciais = {
 let dadosRamais = {};
 let categoriasRecolhidas = {};
 let termoBusca = "";
+let usuarioAtual = null;
+let podeEditar = false;
 
 // ===============================
 // ELEMENTOS
@@ -194,16 +218,103 @@ const btnRecolherTudo = document.getElementById("btnRecolherTudo");
 const ultimaAtualizacao = document.getElementById("ultimaAtualizacao");
 const toast = document.getElementById("toast");
 
+const btnLogin = document.getElementById("btnLogin");
+const btnLogout = document.getElementById("btnLogout");
+const statusUsuario = document.getElementById("statusUsuario");
+
+const modalLogin = document.getElementById("modalLogin");
+const campoEmailLogin = document.getElementById("campoEmailLogin");
+const campoSenhaLogin = document.getElementById("campoSenhaLogin");
+const btnCancelarLogin = document.getElementById("btnCancelarLogin");
+const btnEntrarLogin = document.getElementById("btnEntrarLogin");
+
+// ===============================
+// LOGIN E PERMISSÃO
+// ===============================
+
+auth.onAuthStateChanged(user => {
+  usuarioAtual = user;
+  podeEditar = false;
+
+  if (!user) {
+    aplicarModoConsulta();
+    return;
+  }
+
+  editoresRef.child(user.uid).once("value").then(snapshot => {
+    podeEditar = snapshot.val() === true;
+
+    if (podeEditar) {
+      aplicarModoEditor(user.email);
+    } else {
+      aplicarModoConsulta();
+      mostrarToast("Login feito, mas este usuário não tem permissão para editar.");
+    }
+
+    renderizarRamais();
+  });
+});
+
+function aplicarModoEditor(email) {
+  document.body.classList.add("modo-editor");
+
+  statusUsuario.textContent = `Editor: ${email}`;
+  statusUsuario.classList.add("editor");
+
+  btnLogin.classList.add("escondido");
+  btnLogout.classList.remove("escondido");
+}
+
+function aplicarModoConsulta() {
+  document.body.classList.remove("modo-editor");
+
+  statusUsuario.textContent = "Modo consulta";
+  statusUsuario.classList.remove("editor");
+
+  btnLogin.classList.remove("escondido");
+  btnLogout.classList.add("escondido");
+
+  podeEditar = false;
+  renderizarRamais();
+}
+
+btnLogin.addEventListener("click", () => {
+  campoEmailLogin.value = "";
+  campoSenhaLogin.value = "";
+  modalLogin.classList.add("aberto");
+  campoEmailLogin.focus();
+});
+
+btnCancelarLogin.addEventListener("click", () => {
+  modalLogin.classList.remove("aberto");
+});
+
+btnEntrarLogin.addEventListener("click", () => {
+  const email = campoEmailLogin.value.trim();
+  const senha = campoSenhaLogin.value;
+
+  if (!email || !senha) {
+    mostrarToast("Digite e-mail e senha.");
+    return;
+  }
+
+  auth.signInWithEmailAndPassword(email, senha)
+    .then(() => {
+      modalLogin.classList.remove("aberto");
+      mostrarToast("Login realizado.");
+    })
+    .catch(() => {
+      mostrarToast("E-mail ou senha incorretos.");
+    });
+});
+
+btnLogout.addEventListener("click", () => {
+  auth.signOut();
+});
+
 // ===============================
 // INICIAR FIREBASE
 // ===============================
-
-ramaisRef.once("value").then(snapshot => {
-  if (!snapshot.exists()) {
-    ramaisRef.set(dadosIniciais);
-    registrarUltimaAtualizacao();
-  }
-});
 
 ramaisRef.on("value", snapshot => {
   dadosRamais = snapshot.val() || {};
@@ -232,6 +343,15 @@ function renderizarRamais() {
 
   if (categorias.length === 0) {
     areaRamais.innerHTML = `<p class="carregando">Nenhuma categoria cadastrada.</p>`;
+
+    if (podeEditar) {
+      areaRamais.innerHTML += `
+        <p class="carregando">
+          Banco vazio. Aperte F12, vá no Console e digite: carregarDadosIniciais()
+        </p>
+      `;
+    }
+
     return;
   }
 
@@ -398,14 +518,29 @@ areaRamais.addEventListener("click", evento => {
   }
 
   if (acao === "adicionar") {
+    if (!podeEditar) {
+      mostrarToast("Você não tem permissão para adicionar.");
+      return;
+    }
+
     abrirModalAdicionarPessoa(categoria);
   }
 
   if (acao === "editar") {
+    if (!podeEditar) {
+      mostrarToast("Você não tem permissão para editar.");
+      return;
+    }
+
     abrirModalEditarPessoa(categoria, id);
   }
 
   if (acao === "excluir") {
+    if (!podeEditar) {
+      mostrarToast("Você não tem permissão para excluir.");
+      return;
+    }
+
     excluirPessoa(categoria, id);
   }
 });
@@ -415,6 +550,11 @@ areaRamais.addEventListener("click", evento => {
 // ===============================
 
 btnAdicionarCategoria.addEventListener("click", () => {
+  if (!podeEditar) {
+    mostrarToast("Você não tem permissão para criar categorias.");
+    return;
+  }
+
   nomeNovaCategoria.value = "";
   modalCategoria.classList.add("aberto");
   nomeNovaCategoria.focus();
@@ -425,6 +565,11 @@ btnCancelarCategoria.addEventListener("click", () => {
 });
 
 btnSalvarCategoria.addEventListener("click", () => {
+  if (!podeEditar) {
+    mostrarToast("Você não tem permissão para salvar categorias.");
+    return;
+  }
+
   const nome = nomeNovaCategoria.value.trim();
 
   if (!nome) {
@@ -451,6 +596,8 @@ btnSalvarCategoria.addEventListener("click", () => {
     registrarUltimaAtualizacao();
     modalCategoria.classList.remove("aberto");
     mostrarToast("Categoria criada com sucesso.");
+  }).catch(() => {
+    mostrarToast("Erro: sem permissão para criar categoria.");
   });
 });
 
@@ -504,6 +651,11 @@ btnCancelarPessoa.addEventListener("click", () => {
 });
 
 btnSalvarPessoa.addEventListener("click", () => {
+  if (!podeEditar) {
+    mostrarToast("Você não tem permissão para salvar ramais.");
+    return;
+  }
+
   const categoria = categoriaAtual.value;
   const pessoaId = pessoaIdAtual.value;
 
@@ -543,6 +695,8 @@ btnSalvarPessoa.addEventListener("click", () => {
     }
 
     modalPessoa.classList.remove("aberto");
+  }).catch(() => {
+    mostrarToast("Erro: sem permissão para salvar.");
   });
 });
 
@@ -559,6 +713,8 @@ function excluirPessoa(categoria, pessoaId) {
   ramaisRef.child(categoria).child(pessoaId).remove().then(() => {
     registrarUltimaAtualizacao();
     mostrarToast("Ramal excluído.");
+  }).catch(() => {
+    mostrarToast("Erro: sem permissão para excluir.");
   });
 }
 
@@ -654,7 +810,7 @@ function escaparHtml(texto) {
 
 function registrarUltimaAtualizacao() {
   const agora = new Date().toISOString();
-  atualizacaoRef.set(agora);
+  return atualizacaoRef.set(agora);
 }
 
 function formatarDataHora(dataISO) {
@@ -669,7 +825,26 @@ function formatarDataHora(dataISO) {
   });
 }
 
-// Fecha modal clicando fora
+// Use esta função somente se seu banco estiver vazio.
+// Faça login como editor, aperte F12, vá em Console e digite:
+// carregarDadosIniciais()
+function carregarDadosIniciais() {
+  if (!podeEditar) {
+    mostrarToast("Faça login como editor para carregar os dados iniciais.");
+    return;
+  }
+
+  ramaisRef.set(dadosIniciais).then(() => {
+    registrarUltimaAtualizacao();
+    mostrarToast("Dados iniciais carregados.");
+  }).catch(() => {
+    mostrarToast("Erro ao carregar dados iniciais.");
+  });
+}
+
+// ===============================
+// FECHAR MODAIS CLICANDO FORA
+// ===============================
 
 modalCategoria.addEventListener("click", evento => {
   if (evento.target === modalCategoria) {
@@ -680,5 +855,11 @@ modalCategoria.addEventListener("click", evento => {
 modalPessoa.addEventListener("click", evento => {
   if (evento.target === modalPessoa) {
     modalPessoa.classList.remove("aberto");
+  }
+});
+
+modalLogin.addEventListener("click", evento => {
+  if (evento.target === modalLogin) {
+    modalLogin.classList.remove("aberto");
   }
 });

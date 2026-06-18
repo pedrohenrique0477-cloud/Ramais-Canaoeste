@@ -8,9 +8,10 @@
 
   <link rel="stylesheet" href="style.css" />
 
-  <!-- Firebase -->
+  <!-- Firebase Compatível com o script.js que estamos usando -->
   <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth-compat.js"></script>
 </head>
 
 <body>
@@ -27,20 +28,35 @@
       <div>
         <h1>Lista de Ramais</h1>
         <p>Consulte, edite e organize os ramais da empresa.</p>
+
         <p class="ultima-atualizacao" id="ultimaAtualizacao">
           Última atualização: carregando...
         </p>
       </div>
 
-      <button class="btn-principal" id="btnAdicionarCategoria">
-        + Nova categoria
-      </button>
+      <div class="area-login">
+        <span id="statusUsuario" class="status-usuario">
+          Modo consulta
+        </span>
+
+        <button class="btn-secundario" id="btnLogin">
+          Entrar para editar
+        </button>
+
+        <button class="btn-secundario escondido" id="btnLogout">
+          Sair da edição
+        </button>
+
+        <button class="btn-principal somente-editor" id="btnAdicionarCategoria">
+          + Nova categoria
+        </button>
+      </div>
     </section>
 
     <section class="barra-filtros">
-      <input 
-        type="text" 
-        id="campoBusca" 
+      <input
+        type="text"
+        id="campoBusca"
         placeholder="Pesquisar por nome, ramal, setor ou função..."
       />
 
@@ -58,22 +74,64 @@
     </section>
   </main>
 
-  <!-- Modal Categoria -->
-  <div class="modal" id="modalCategoria">
+  <!-- MODAL DE LOGIN -->
+  <div class="modal" id="modalLogin">
     <div class="modal-conteudo">
-      <h2>Nova categoria</h2>
+      <h2>Entrar para editar</h2>
 
-      <label>Nome da categoria</label>
-      <input type="text" id="nomeNovaCategoria" placeholder="Ex: Financeiro" />
+      <label for="campoEmailLogin">E-mail</label>
+      <input
+        type="email"
+        id="campoEmailLogin"
+        placeholder="seuemail@empresa.com"
+        autocomplete="email"
+      />
+
+      <label for="campoSenhaLogin">Senha</label>
+      <input
+        type="password"
+        id="campoSenhaLogin"
+        placeholder="Digite sua senha"
+        autocomplete="current-password"
+      />
 
       <div class="modal-acoes">
-        <button class="btn-secundario" id="btnCancelarCategoria">Cancelar</button>
-        <button class="btn-principal" id="btnSalvarCategoria">Salvar</button>
+        <button class="btn-secundario" id="btnCancelarLogin">
+          Cancelar
+        </button>
+
+        <button class="btn-principal" id="btnEntrarLogin">
+          Entrar
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- Modal Pessoa -->
+  <!-- MODAL DE NOVA CATEGORIA -->
+  <div class="modal" id="modalCategoria">
+    <div class="modal-conteudo">
+      <h2>Nova categoria</h2>
+
+      <label for="nomeNovaCategoria">Nome da categoria</label>
+      <input
+        type="text"
+        id="nomeNovaCategoria"
+        placeholder="Ex: Financeiro"
+      />
+
+      <div class="modal-acoes">
+        <button class="btn-secundario" id="btnCancelarCategoria">
+          Cancelar
+        </button>
+
+        <button class="btn-principal" id="btnSalvarCategoria">
+          Salvar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE ADICIONAR / EDITAR RAMAL -->
   <div class="modal" id="modalPessoa">
     <div class="modal-conteudo modal-maior">
       <h2 id="tituloModalPessoa">Adicionar ramal</h2>
@@ -83,27 +141,43 @@
 
       <div class="grid-form">
         <div>
-          <label>Nome</label>
-          <input type="text" id="campoNome" placeholder="Nome da pessoa" />
+          <label for="campoNome">Nome</label>
+          <input
+            type="text"
+            id="campoNome"
+            placeholder="Nome da pessoa"
+          />
         </div>
 
         <div>
-          <label>Ramal</label>
-          <input type="text" id="campoRamal" placeholder="Ex: 1000" />
+          <label for="campoRamal">Ramal</label>
+          <input
+            type="text"
+            id="campoRamal"
+            placeholder="Ex: 1000"
+          />
         </div>
 
         <div>
-          <label>Função / Cargo</label>
-          <input type="text" id="campoCargo" placeholder="Ex: Gestor Operacional" />
+          <label for="campoCargo">Função / Cargo</label>
+          <input
+            type="text"
+            id="campoCargo"
+            placeholder="Ex: Gestor Operacional"
+          />
         </div>
 
         <div>
-          <label>Categoria</label>
-          <input type="text" id="campoCategoriaTexto" disabled />
+          <label for="campoCategoriaTexto">Categoria</label>
+          <input
+            type="text"
+            id="campoCategoriaTexto"
+            disabled
+          />
         </div>
 
         <div>
-          <label>Tipo</label>
+          <label for="campoTipo">Tipo</label>
           <select id="campoTipo">
             <option value="Fone">Fone</option>
             <option value="Móvel">Móvel</option>
@@ -114,14 +188,23 @@
         </div>
 
         <div>
-          <label>Observação</label>
-          <input type="text" id="campoObservacao" placeholder="Opcional" />
+          <label for="campoObservacao">Observação</label>
+          <input
+            type="text"
+            id="campoObservacao"
+            placeholder="Opcional"
+          />
         </div>
       </div>
 
       <div class="modal-acoes">
-        <button class="btn-secundario" id="btnCancelarPessoa">Cancelar</button>
-        <button class="btn-principal" id="btnSalvarPessoa">Salvar</button>
+        <button class="btn-secundario" id="btnCancelarPessoa">
+          Cancelar
+        </button>
+
+        <button class="btn-principal" id="btnSalvarPessoa">
+          Salvar
+        </button>
       </div>
     </div>
   </div>
