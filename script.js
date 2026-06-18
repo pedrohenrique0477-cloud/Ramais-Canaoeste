@@ -22,162 +22,6 @@ const atualizacaoRef = db.ref("ultima_atualizacao_ramais");
 const editoresRef = db.ref("editores");
 
 // ===============================
-// DADOS INICIAIS
-// ===============================
-
-const dadosIniciais = {
-  "Diretoria": [
-    { ramal: "1000", nome: "Fernando dos Reis", cargo: "Presidente", tipo: "Fone", observacao: "" },
-    { ramal: "8001", nome: "Fernando dos Reis", cargo: "Presidente", tipo: "Móvel", observacao: "" },
-    { ramal: "8002", nome: "Marco Guidi", cargo: "Vice-Presidente", tipo: "Fone", observacao: "" },
-    { ramal: "101", nome: "Almir Torcato", cargo: "Gestor Corporativo", tipo: "Fone", observacao: "" },
-    { ramal: "1001", nome: "Almir Torcato", cargo: "Gestor Corporativo", tipo: "Móvel", observacao: "" }
-  ],
-
-  "Soluções Integradas": [
-    { ramal: "102", nome: "Thiago Silva", cargo: "Gestor Operacional", tipo: "Fone", observacao: "" },
-    { ramal: "1002", nome: "Thiago Silva", cargo: "Gestor Operacional", tipo: "Móvel", observacao: "" }
-  ],
-
-  "Tecnologia da Informação": [
-    { ramal: "103", nome: "Alessandro Costa", cargo: "Suporte Técnico", tipo: "Fone", observacao: "" },
-    { ramal: "1004", nome: "Pedro Casalli", cargo: "Suporte Técnico", tipo: "Móvel", observacao: "" }
-  ],
-
-  "CanaoesteLab": [
-    { ramal: "160", nome: "Lucas Teodoro", cargo: "Coordenador", tipo: "Fone", observacao: "" },
-    { ramal: "161", nome: "Daniel Carvalho", cargo: "", tipo: "Fone", observacao: "" },
-    { ramal: "161", nome: "Beatriz Danelon", cargo: "Analista", tipo: "Fone", observacao: "" }
-  ],
-
-  "Administrativo": [
-    { ramal: "105", nome: "Edson Mussa", cargo: "Coordenador", tipo: "Fone", observacao: "" },
-    { ramal: "1105", nome: "Edson Mussa", cargo: "Coordenador", tipo: "PC", observacao: "" },
-    { ramal: "134", nome: "Júlia Perticarrari", cargo: "Jovem Aprendiz", tipo: "Fone", observacao: "" },
-    { ramal: "106", nome: "Daiane Serafim", cargo: "", tipo: "Fone", observacao: "" },
-    { ramal: "108", nome: "Gabriel Santos", cargo: "Recursos Humanos", tipo: "Fone", observacao: "" },
-    { ramal: "1108", nome: "Gabriel Santos", cargo: "Recursos Humanos", tipo: "PC", observacao: "" },
-    { ramal: "107", nome: "José Alberto", cargo: "", tipo: "Fone", observacao: "" },
-    { ramal: "109", nome: "Ruth Neudielle", cargo: "Financeiro", tipo: "Fone", observacao: "" },
-    { ramal: "1109", nome: "Ruth Neudielle", cargo: "Financeiro", tipo: "PC", observacao: "" }
-  ],
-
-  "Comunicação e Marketing": [
-    { ramal: "110", nome: "Lucas Figueiredo", cargo: "Coordenador", tipo: "Fone", observacao: "" },
-    { ramal: "1010", nome: "Lucas Figueiredo", cargo: "Coordenador", tipo: "Móvel", observacao: "" },
-    { ramal: "111", nome: "Ludmila Haikal Rizzi", cargo: "", tipo: "Fone", observacao: "" },
-    { ramal: "132", nome: "Ana Lívia", cargo: "", tipo: "Fone", observacao: "" },
-    { ramal: "133", nome: "Kelvin Oliveira", cargo: "Jovem Aprendiz", tipo: "PC", observacao: "" }
-  ],
-
-  "CanaoesteBio": [
-    { ramal: "151", nome: "André Volpe", cargo: "Gestor Operacional", tipo: "Fone", observacao: "" },
-    { ramal: "1051", nome: "André Volpe", cargo: "Gestor Operacional", tipo: "Móvel", observacao: "" },
-    { ramal: "1151", nome: "André Volpe", cargo: "Gestor Operacional", tipo: "PC", observacao: "" },
-    { ramal: "150", nome: "Murilo Lopes", cargo: "", tipo: "Fone", observacao: "" },
-    { ramal: "1150", nome: "Murilo Lopes", cargo: "", tipo: "PC", observacao: "" },
-    { ramal: "1250", nome: "Murilo Lopes", cargo: "", tipo: "Móvel", observacao: "" },
-    { ramal: "152", nome: "Maysa Corrêa", cargo: "Laboratório", tipo: "Fone", observacao: "" },
-    { ramal: "156", nome: "Maysa Corrêa", cargo: "Laboratório", tipo: "Fone", observacao: "" },
-    { ramal: "153", nome: "Sala de Reunião", cargo: "", tipo: "Fone", observacao: "" },
-    { ramal: "154", nome: "Fábrica", cargo: "", tipo: "Fone", observacao: "" },
-    { ramal: "155", nome: "Casa de Máquina", cargo: "", tipo: "Fone", observacao: "" }
-  ],
-
-  "Geotecnologia": [
-    { ramal: "115", nome: "André Leite", cargo: "", tipo: "Fone", observacao: "" },
-    { ramal: "116", nome: "Marcelo Pardinho", cargo: "", tipo: "Fone", observacao: "" },
-    { ramal: "117", nome: "André Rafael", cargo: "", tipo: "Fone", observacao: "" },
-    { ramal: "118", nome: "Lucas Meloni", cargo: "", tipo: "Fone", observacao: "" },
-    { ramal: "119", nome: "Antônio Peghini", cargo: "", tipo: "Fone", observacao: "" },
-    { ramal: "120", nome: "Creomar Peres", cargo: "", tipo: "Fone", observacao: "" }
-  ],
-
-  "Projeto Vem Ser": [
-    { ramal: "170", nome: "Haroldo Beraldo", cargo: "", tipo: "Fone", observacao: "" }
-  ],
-
-  "Frota": [
-    { ramal: "112", nome: "Pedro Alves", cargo: "", tipo: "Fone", observacao: "" }
-  ],
-
-  "Ambiental": [
-    { ramal: "121", nome: "Fábio Soldera", cargo: "Gestor Operacional", tipo: "Fone", observacao: "" },
-    { ramal: "1021", nome: "Fábio Soldera", cargo: "Gestor Operacional", tipo: "Móvel", observacao: "" },
-    { ramal: "1121", nome: "Fábio Soldera", cargo: "Gestor Operacional", tipo: "PC", observacao: "" },
-    { ramal: "122", nome: "Ricardo Vaz", cargo: "", tipo: "Fone", observacao: "" },
-    { ramal: "1022", nome: "Ricardo Vaz", cargo: "", tipo: "Móvel", observacao: "" },
-    { ramal: "1122", nome: "Ricardo Vaz", cargo: "", tipo: "PC", observacao: "" },
-    { ramal: "126", nome: "Guilherme Di Bianco", cargo: "", tipo: "Fone", observacao: "" },
-    { ramal: "127", nome: "Marcelo Tová", cargo: "", tipo: "Fone", observacao: "" },
-    { ramal: "135", nome: "Guilherme Santos", cargo: "Jovem Aprendiz", tipo: "Fone", observacao: "" },
-    { ramal: "1036", nome: "Andréia Balleiro", cargo: "Comercial CanaoesteGreen", tipo: "Móvel", observacao: "" }
-  ],
-
-  "Jurídico": [
-    { ramal: "124", nome: "Juliano Bortoloti", cargo: "Gestor Jurídico", tipo: "Fone", observacao: "" },
-    { ramal: "125", nome: "Diego Rossaneis", cargo: "Advogado", tipo: "Fone", observacao: "" },
-    { ramal: "128", nome: "Renata/Daniela", cargo: "Secretária", tipo: "Fone", observacao: "" },
-    { ramal: "129", nome: "Rafael Costa", cargo: "Advogado", tipo: "Fone", observacao: "" }
-  ],
-
-  "Departamento Técnico": [
-    { ramal: "113", nome: "Alessandra Durigan", cargo: "Gestora Operacional", tipo: "Fone", observacao: "" },
-    { ramal: "1013", nome: "Alessandra Durigan", cargo: "Gestora Operacional", tipo: "Móvel", observacao: "" },
-    { ramal: "1113", nome: "Alessandra Durigan", cargo: "Gestora Operacional", tipo: "PC", observacao: "" },
-    { ramal: "157", nome: "André Volpe", cargo: "Gestor Operacional", tipo: "Fone", observacao: "" },
-
-    { ramal: "100", nome: "Adalita Andreata", cargo: "Secretária Sertãozinho", tipo: "Fone", observacao: "" },
-    { ramal: "114", nome: "Victor Prati", cargo: "Agrônomo Sertãozinho", tipo: "Fone", observacao: "" },
-    { ramal: "1014", nome: "Victor Prati", cargo: "Agrônomo Sertãozinho", tipo: "Móvel", observacao: "" },
-    { ramal: "1114", nome: "Victor Prati", cargo: "Agrônomo Sertãozinho", tipo: "PC", observacao: "" },
-
-    { ramal: "200", nome: "Elaine Chrispim", cargo: "Secretária Cravinhos", tipo: "Fone", observacao: "" },
-    { ramal: "201", nome: "Marco Polegato", cargo: "Agrônomo Cravinhos", tipo: "Fone", observacao: "" },
-
-    { ramal: "205", nome: "Carla Hipólito", cargo: "Secretária Serrana", tipo: "Fone", observacao: "" },
-    { ramal: "206", nome: "Danilo Mazoni", cargo: "Agrônomo Serrana", tipo: "Fone", observacao: "" },
-
-    { ramal: "210", nome: "Michele Gonçalves", cargo: "Secretária Pontal", tipo: "Fone", observacao: "" },
-    { ramal: "211", nome: "João Pedro Fontanari", cargo: "Agrônomo Pontal", tipo: "Fone", observacao: "" },
-
-    { ramal: "215", nome: "Tatiane Trovo", cargo: "Secretária Pitangueiras", tipo: "Fone", observacao: "" },
-    { ramal: "216", nome: "Felipe Volpe", cargo: "Agrônomo Pitangueiras", tipo: "Fone", observacao: "" },
-
-    { ramal: "220", nome: "Rose de Oliveira", cargo: "Secretária Bebedouro", tipo: "Fone", observacao: "" },
-    { ramal: "2120", nome: "Rose de Oliveira", cargo: "Secretária Bebedouro", tipo: "Móvel", observacao: "" },
-    { ramal: "221", nome: "Felipe Volpe", cargo: "Agrônomo Bebedouro", tipo: "Fone", observacao: "" },
-
-    { ramal: "225", nome: "Juliana Leite", cargo: "Secretária Viradouro", tipo: "Fone", observacao: "" },
-    { ramal: "226", nome: "Antonio Pagotto", cargo: "Agrônomo Viradouro", tipo: "Fone", observacao: "" },
-
-    { ramal: "230", nome: "Aline Padovan", cargo: "Secretária Morro Agudo", tipo: "Fone", observacao: "" },
-    { ramal: "231", nome: "João Fernando", cargo: "Agrônomo Morro Agudo", tipo: "Fone", observacao: "" },
-
-    { ramal: "235", nome: "Maria Izabela Rodrigues", cargo: "Escritório Barretos", tipo: "Fone", observacao: "" },
-    { ramal: "236", nome: "Luiz Silverio Neto", cargo: "Agrônomo Barretos", tipo: "Fone", observacao: "" },
-
-    { ramal: "240", nome: "Guilherme Tormena", cargo: "Agrônomo Ituverava", tipo: "Fone", observacao: "" },
-
-    { ramal: "245", nome: "Eduardo Neto", cargo: "Agrônomo Descalvado", tipo: "Fone", observacao: "" },
-
-    { ramal: "250", nome: "Joice Mantovani", cargo: "Secretária Severínia", tipo: "Fone", observacao: "" },
-    { ramal: "251", nome: "Ivan Tilelli Burjaili", cargo: "Agrônomo Severínia", tipo: "Fone", observacao: "" },
-    { ramal: "2051", nome: "Ivan Tilelli Burjaili", cargo: "Agrônomo Severínia", tipo: "Móvel", observacao: "" },
-
-    { ramal: "255", nome: "Ariele M. Lima de Castro", cargo: "Secretária Catanduva", tipo: "Fone", observacao: "" },
-    { ramal: "1255", nome: "Ariele M. Lima de Castro", cargo: "Secretária Catanduva", tipo: "Móvel", observacao: "" },
-    { ramal: "2255", nome: "Ariele M. Lima de Castro", cargo: "Secretária Catanduva", tipo: "PC", observacao: "" },
-
-    { ramal: "256", nome: "Aderbal José Turin", cargo: "Geo Catanduva", tipo: "Fone", observacao: "" },
-    { ramal: "1256", nome: "Aderbal José Turin", cargo: "Geo Catanduva", tipo: "Móvel", observacao: "" },
-    { ramal: "2256", nome: "Aderbal José Turin", cargo: "Geo Catanduva", tipo: "PC", observacao: "" },
-
-    { ramal: "2256", nome: "Marcelo Colla", cargo: "Jurídico Catanduva", tipo: "Fone", observacao: "" }
-  ]
-};
-
-// ===============================
 // VARIÁVEIS
 // ===============================
 
@@ -256,6 +100,8 @@ auth.onAuthStateChanged(user => {
 });
 
 function aplicarModoEditor(email) {
+  podeEditar = true;
+
   document.body.classList.add("modo-editor");
   document.body.classList.remove("mostrar-login");
 
@@ -265,11 +111,12 @@ function aplicarModoEditor(email) {
   btnLogin.classList.add("escondido");
   btnLogout.classList.remove("escondido");
 
-  podeEditar = true;
   renderizarRamais();
 }
 
 function aplicarModoConsulta() {
+  podeEditar = false;
+
   document.body.classList.remove("modo-editor");
 
   statusUsuario.textContent = "Modo consulta";
@@ -278,7 +125,6 @@ function aplicarModoConsulta() {
   btnLogin.classList.remove("escondido");
   btnLogout.classList.add("escondido");
 
-  podeEditar = false;
   renderizarRamais();
 }
 
@@ -316,7 +162,7 @@ btnLogout.addEventListener("click", () => {
   auth.signOut();
 });
 
-// Atalho para liberar o botão de login.
+// Atalho secreto para mostrar o botão de login.
 // Aperte Ctrl + Alt + E.
 document.addEventListener("keydown", evento => {
   if (evento.ctrlKey && evento.altKey && evento.key.toLowerCase() === "e") {
@@ -365,15 +211,6 @@ function renderizarRamais() {
 
   if (categorias.length === 0) {
     areaRamais.innerHTML = `<p class="carregando">Nenhuma categoria cadastrada.</p>`;
-
-    if (podeEditar) {
-      areaRamais.innerHTML += `
-        <p class="carregando">
-          Banco vazio. Aperte F12, vá no Console e digite: carregarDadosIniciais()
-        </p>
-      `;
-    }
-
     return;
   }
 
@@ -411,6 +248,18 @@ function renderizarRamais() {
     const recolhida = categoriasRecolhidas[categoria] === true;
     const textoBotaoMostrar = recolhida ? "Mostrar" : "Ocultar";
 
+    const botaoAdicionar = podeEditar
+      ? `
+        <button 
+          class="btn-pequeno btn-adicionar-menor" 
+          data-acao="adicionar" 
+          data-categoria="${escaparHtml(categoria)}"
+        >
+          + Adicionar
+        </button>
+      `
+      : "";
+
     card.innerHTML = `
       <div class="categoria-topo">
         <h2>${escaparHtml(categoria)}</h2>
@@ -424,13 +273,7 @@ function renderizarRamais() {
             ${textoBotaoMostrar}
           </button>
 
-          <button 
-            class="btn-pequeno btn-adicionar-menor" 
-            data-acao="adicionar" 
-            data-categoria="${escaparHtml(categoria)}"
-          >
-            + Adicionar
-          </button>
+          ${botaoAdicionar}
         </div>
       </div>
 
@@ -452,28 +295,17 @@ function montarTabela(categoria, pessoas) {
     return `<p class="sem-registros">Nenhum ramal cadastrado nesta categoria.</p>`;
   }
 
+  const colunaAcoesCabecalho = podeEditar
+    ? `<th class="col-acoes">Ações</th>`
+    : "";
+
   const linhas = pessoas.map(pessoa => {
     const cargo = pessoa.cargo
       ? `<div class="cargo-pessoa">${escaparHtml(pessoa.cargo)}</div>`
       : `<div class="cargo-vazio">Sem função informada</div>`;
 
-    return `
-      <tr>
-        <td class="col-ramal">${escaparHtml(pessoa.ramal || "")}</td>
-
-        <td class="col-nome">
-          <div class="nome-pessoa">${escaparHtml(pessoa.nome || "")}</div>
-          ${pessoa.observacao ? `<div class="cargo-pessoa">${escaparHtml(pessoa.observacao)}</div>` : ""}
-        </td>
-
-        <td class="col-cargo">
-          ${cargo}
-        </td>
-
-        <td class="col-tipo">
-          <span class="tag-tipo">${escaparHtml(pessoa.tipo || "Fone")}</span>
-        </td>
-
+    const colunaAcoesLinha = podeEditar
+      ? `
         <td class="col-acoes">
           <div class="acoes-botoes">
             <button 
@@ -495,6 +327,27 @@ function montarTabela(categoria, pessoas) {
             </button>
           </div>
         </td>
+      `
+      : "";
+
+    return `
+      <tr>
+        <td class="col-ramal">${escaparHtml(pessoa.ramal || "")}</td>
+
+        <td class="col-nome">
+          <div class="nome-pessoa">${escaparHtml(pessoa.nome || "")}</div>
+          ${pessoa.observacao ? `<div class="cargo-pessoa">${escaparHtml(pessoa.observacao)}</div>` : ""}
+        </td>
+
+        <td class="col-cargo">
+          ${cargo}
+        </td>
+
+        <td class="col-tipo">
+          <span class="tag-tipo">${escaparHtml(pessoa.tipo || "Fone")}</span>
+        </td>
+
+        ${colunaAcoesLinha}
       </tr>
     `;
   }).join("");
@@ -508,7 +361,7 @@ function montarTabela(categoria, pessoas) {
             <th class="col-nome">Nome</th>
             <th class="col-cargo">Função / Cargo</th>
             <th class="col-tipo">Tipo</th>
-            <th class="col-acoes">Ações</th>
+            ${colunaAcoesCabecalho}
           </tr>
         </thead>
 
@@ -537,6 +390,7 @@ areaRamais.addEventListener("click", evento => {
 
   if (acao === "alternar") {
     alternarCategoria(categoria);
+    return;
   }
 
   if (acao === "adicionar") {
@@ -546,6 +400,7 @@ areaRamais.addEventListener("click", evento => {
     }
 
     abrirModalAdicionarPessoa(categoria);
+    return;
   }
 
   if (acao === "editar") {
@@ -555,6 +410,7 @@ areaRamais.addEventListener("click", evento => {
     }
 
     abrirModalEditarPessoa(categoria, id);
+    return;
   }
 
   if (acao === "excluir") {
@@ -564,6 +420,7 @@ areaRamais.addEventListener("click", evento => {
     }
 
     excluirPessoa(categoria, id);
+    return;
   }
 });
 
@@ -844,23 +701,6 @@ function formatarDataHora(dataISO) {
     year: "numeric",
     hour: "2-digit",
     minute: "2-digit"
-  });
-}
-
-// Use esta função somente se seu banco estiver vazio.
-// Faça login como editor, aperte F12, vá em Console e digite:
-// carregarDadosIniciais()
-function carregarDadosIniciais() {
-  if (!podeEditar) {
-    mostrarToast("Faça login como editor para carregar os dados iniciais.");
-    return;
-  }
-
-  ramaisRef.set(dadosIniciais).then(() => {
-    registrarUltimaAtualizacao();
-    mostrarToast("Dados iniciais carregados.");
-  }).catch(() => {
-    mostrarToast("Erro ao carregar dados iniciais.");
   });
 }
 
