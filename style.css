@@ -642,3 +642,17 @@ body:not(.modo-editor) .col-tipo {
     gap: 3px;
   }
 }
+
+/* LINHAS INTERCALADAS PARA MELHOR LEITURA */
+
+.tabela-ramais tbody tr:nth-child(odd) td {
+  background: #ffffff;
+}
+
+.tabela-ramais tbody tr:nth-child(even) td {
+  background: #f0f6f5;
+}
+
+.tabela-ramais tbody tr:hover td {
+  background: #dcefeb;
+}
