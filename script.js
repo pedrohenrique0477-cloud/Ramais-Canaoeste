@@ -257,12 +257,16 @@ auth.onAuthStateChanged(user => {
 
 function aplicarModoEditor(email) {
   document.body.classList.add("modo-editor");
+  document.body.classList.remove("mostrar-login");
 
   statusUsuario.textContent = `Editor: ${email}`;
   statusUsuario.classList.add("editor");
 
   btnLogin.classList.add("escondido");
   btnLogout.classList.remove("escondido");
+
+  podeEditar = true;
+  renderizarRamais();
 }
 
 function aplicarModoConsulta() {
@@ -310,6 +314,24 @@ btnEntrarLogin.addEventListener("click", () => {
 
 btnLogout.addEventListener("click", () => {
   auth.signOut();
+});
+
+// Atalho para liberar o botão de login.
+// Aperte Ctrl + Alt + E.
+document.addEventListener("keydown", evento => {
+  if (evento.ctrlKey && evento.altKey && evento.key.toLowerCase() === "e") {
+    if (podeEditar) {
+      return;
+    }
+
+    document.body.classList.toggle("mostrar-login");
+
+    if (document.body.classList.contains("mostrar-login")) {
+      mostrarToast("Login de edição liberado.");
+    } else {
+      mostrarToast("Login de edição ocultado.");
+    }
+  }
 });
 
 // ===============================

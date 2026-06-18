@@ -27,7 +27,7 @@ body {
 /* TOPO */
 
 .topo {
-  height: 85px;
+  height: 115px;
   background: var(--verde-principal);
   display: flex;
   align-items: center;
@@ -42,8 +42,8 @@ body {
 }
 
 .logo {
-  height: 78px;
-  max-width: 380px;
+  height: 90px;
+  max-width: 450px;
   object-fit: contain;
   filter: brightness(0) invert(1);
 }
@@ -87,6 +87,80 @@ body {
 
 .ultima-atualizacao strong {
   color: var(--verde-principal);
+}
+
+/* LOGIN */
+
+.area-login {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.status-usuario {
+  font-size: 13px;
+  color: var(--cinza);
+  background: white;
+  border: 1px solid var(--borda-clara);
+  padding: 8px 10px;
+  border-radius: 7px;
+}
+
+.status-usuario.editor {
+  color: white;
+  background: var(--verde-principal);
+  border-color: var(--verde-principal);
+  font-weight: bold;
+}
+
+.escondido {
+  display: none !important;
+}
+
+/* MODO CONSULTA LIMPO */
+
+body:not(.modo-editor) .somente-editor,
+body:not(.modo-editor) .btn-adicionar-menor,
+body:not(.modo-editor) .col-acoes {
+  display: none !important;
+}
+
+body:not(.mostrar-login) #btnLogin {
+  display: none !important;
+}
+
+body:not(.modo-editor) #statusUsuario {
+  display: none !important;
+}
+
+body.modo-editor #statusUsuario {
+  display: inline-flex !important;
+}
+
+body.modo-editor #btnLogout {
+  display: inline-flex !important;
+}
+
+body:not(.modo-editor) #btnLogout {
+  display: none !important;
+}
+
+body:not(.modo-editor):not(.mostrar-login) .area-login {
+  display: none !important;
+}
+
+body:not(.modo-editor) .col-nome {
+  width: 38%;
+}
+
+body:not(.modo-editor) .col-cargo {
+  width: 44%;
+}
+
+body:not(.modo-editor) .col-tipo {
+  width: 80px;
 }
 
 /* FILTROS */
@@ -225,7 +299,6 @@ select:focus {
   border-radius: 2px;
   overflow: hidden;
   box-shadow: var(--sombra);
-
   break-inside: avoid;
   page-break-inside: avoid;
   margin-bottom: 10px;
@@ -268,7 +341,7 @@ select:focus {
   padding: 0;
 }
 
-/* TABELA MAIS COMPACTA, ESTILO FOLHA IMPRESSA */
+/* TABELA */
 
 .tabela-wrapper {
   overflow-x: auto;
@@ -386,6 +459,29 @@ select:focus {
   flex-wrap: nowrap;
 }
 
+/* DIRETORIA VERDE */
+
+.card-categoria.diretoria .tabela-ramais th,
+.card-categoria.diretoria .tabela-ramais td {
+  background: #00775C;
+  color: white;
+  border-color: #1f2933;
+}
+
+.card-categoria.diretoria .nome-pessoa,
+.card-categoria.diretoria .cargo-pessoa,
+.card-categoria.diretoria .tag-tipo {
+  color: white;
+}
+
+.card-categoria.diretoria .cargo-vazio {
+  color: #d8f3ec;
+}
+
+.card-categoria.diretoria .tabela-ramais tr:hover td {
+  background: #006b53;
+}
+
 .sem-registros {
   color: var(--cinza);
   padding: 6px;
@@ -394,7 +490,7 @@ select:focus {
 }
 
 .carregando {
-  grid-column: 1 / -1;
+  column-span: all;
   text-align: center;
   color: var(--cinza);
   font-size: 18px;
@@ -491,12 +587,12 @@ select:focus {
 
 @media (max-width: 700px) {
   .topo {
-    height: 82px;
+    height: 90px;
   }
 
   .logo {
-    height: 50px;
-    max-width: 220px;
+    height: 64px;
+    max-width: 280px;
   }
 
   .container {
@@ -511,6 +607,10 @@ select:focus {
 
   .cabecalho-pagina h1 {
     font-size: 27px;
+  }
+
+  .area-login {
+    justify-content: flex-start;
   }
 
   .barra-filtros {
@@ -553,32 +653,4 @@ select:focus {
     flex-direction: column;
     gap: 3px;
   }
-}
-
-/* DIRETORIA COM FUNDO VERDE IGUAL AO TÓPICO */
-
-.card-categoria.diretoria .tabela-ramais th {
-  background: #00775C;
-  color: white;
-  border-color: #1f2933;
-}
-
-.card-categoria.diretoria .tabela-ramais td {
-  background: #00775C;
-  color: white;
-  border-color: #1f2933;
-}
-
-.card-categoria.diretoria .nome-pessoa,
-.card-categoria.diretoria .cargo-pessoa,
-.card-categoria.diretoria .tag-tipo {
-  color: white;
-}
-
-.card-categoria.diretoria .cargo-vazio {
-  color: #d8f3ec;
-}
-
-.card-categoria.diretoria .tabela-ramais tr:hover td {
-  background: #006b53;
 }
