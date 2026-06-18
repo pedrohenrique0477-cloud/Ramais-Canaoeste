@@ -119,48 +119,24 @@ body {
   display: none !important;
 }
 
-/* MODO CONSULTA LIMPO */
+/* VISUALIZAÇÃO SEM LOGIN */
 
-body:not(.modo-editor) .somente-editor,
-body:not(.modo-editor) .btn-adicionar-menor,
-body:not(.modo-editor) .col-acoes {
+body:not(.modo-editor) .somente-editor {
   display: none !important;
 }
 
-body:not(.mostrar-login) #btnLogin {
-  display: none !important;
-}
-
-body:not(.modo-editor) #statusUsuario {
-  display: none !important;
-}
-
-body.modo-editor #statusUsuario {
-  display: inline-flex !important;
-}
-
-body.modo-editor #btnLogout {
-  display: inline-flex !important;
-}
-
+body:not(.modo-editor) #statusUsuario,
 body:not(.modo-editor) #btnLogout {
   display: none !important;
 }
 
-body:not(.modo-editor):not(.mostrar-login) .area-login {
+body.modo-editor #btnLogin {
   display: none !important;
 }
 
-body:not(.modo-editor) .col-nome {
-  width: 38%;
-}
-
-body:not(.modo-editor) .col-cargo {
-  width: 44%;
-}
-
-body:not(.modo-editor) .col-tipo {
-  width: 80px;
+body.modo-editor #statusUsuario,
+body.modo-editor #btnLogout {
+  display: inline-flex !important;
 }
 
 /* FILTROS */
@@ -388,12 +364,12 @@ select:focus {
 }
 
 .col-nome {
-  width: 32%;
+  width: 33%;
   text-align: left;
 }
 
 .col-cargo {
-  width: 34%;
+  width: 39%;
   text-align: left;
 }
 
@@ -407,6 +383,18 @@ select:focus {
   min-width: 112px;
   max-width: 112px;
   text-align: center;
+}
+
+body:not(.modo-editor) .col-nome {
+  width: 38%;
+}
+
+body:not(.modo-editor) .col-cargo {
+  width: 44%;
+}
+
+body:not(.modo-editor) .col-tipo {
+  width: 80px;
 }
 
 .tabela-ramais th.col-ramal,

@@ -28,7 +28,6 @@ const editoresRef = db.ref("editores");
 let dadosRamais = {};
 let categoriasRecolhidas = {};
 let termoBusca = "";
-let usuarioAtual = null;
 let podeEditar = false;
 
 // ===============================
@@ -77,7 +76,6 @@ const btnEntrarLogin = document.getElementById("btnEntrarLogin");
 // ===============================
 
 auth.onAuthStateChanged(user => {
-  usuarioAtual = user;
   podeEditar = false;
 
   if (!user) {
@@ -91,8 +89,9 @@ auth.onAuthStateChanged(user => {
     if (podeEditar) {
       aplicarModoEditor(user.email);
     } else {
+      auth.signOut();
       aplicarModoConsulta();
-      mostrarToast("Login feito, mas este usuário não tem permissão para editar.");
+      mostrarToast("Usuário sem permissão para editar.");
     }
 
     renderizarRamais();
@@ -103,7 +102,6 @@ function aplicarModoEditor(email) {
   podeEditar = true;
 
   document.body.classList.add("modo-editor");
-  document.body.classList.remove("mostrar-login");
 
   statusUsuario.textContent = `Editor: ${email}`;
   statusUsuario.classList.add("editor");
@@ -139,7 +137,15 @@ btnCancelarLogin.addEventListener("click", () => {
   modalLogin.classList.remove("aberto");
 });
 
-btnEntrarLogin.addEventListener("click", () => {
+btnEntrarLogin.addEventListener("click", fazerLogin);
+
+campoSenhaLogin.addEventListener("keydown", evento => {
+  if (evento.key === "Enter") {
+    fazerLogin();
+  }
+});
+
+function fazerLogin() {
   const email = campoEmailLogin.value.trim();
   const senha = campoSenhaLogin.value;
 
@@ -153,35 +159,40 @@ btnEntrarLogin.addEventListener("click", () => {
       modalLogin.classList.remove("aberto");
       mostrarToast("Login realizado.");
     })
-    .catch(() => {
-      mostrarToast("E-mail ou senha incorretos.");
+    .catch(error => {
+      console.error("Erro no login:", error.code, error.message);
+
+      if (error.code === "auth/invalid-credential" || error.code === "auth/wrong-password") {
+        mostrarToast("E-mail ou senha incorretos.");
+        return;
+      }
+
+      if (error.code === "auth/user-not-found") {
+        mostrarToast("Usuário não encontrado.");
+        return;
+      }
+
+      if (error.code === "auth/invalid-email") {
+        mostrarToast("E-mail inválido.");
+        return;
+      }
+
+      if (error.code === "auth/too-many-requests") {
+        mostrarToast("Muitas tentativas. Aguarde um pouco.");
+        return;
+      }
+
+      mostrarToast("Erro ao fazer login.");
     });
-});
+}
 
 btnLogout.addEventListener("click", () => {
   auth.signOut();
-});
-
-// Atalho secreto para mostrar o botão de login.
-// Aperte Ctrl + Alt + E.
-document.addEventListener("keydown", evento => {
-  if (evento.ctrlKey && evento.altKey && evento.key.toLowerCase() === "e") {
-    if (podeEditar) {
-      return;
-    }
-
-    document.body.classList.toggle("mostrar-login");
-
-    if (document.body.classList.contains("mostrar-login")) {
-      mostrarToast("Login de edição liberado.");
-    } else {
-      mostrarToast("Login de edição ocultado.");
-    }
-  }
+  mostrarToast("Você saiu da edição.");
 });
 
 // ===============================
-// INICIAR FIREBASE
+// FIREBASE DADOS
 // ===============================
 
 ramaisRef.on("value", snapshot => {
@@ -295,7 +306,7 @@ function montarTabela(categoria, pessoas) {
     return `<p class="sem-registros">Nenhum ramal cadastrado nesta categoria.</p>`;
   }
 
-  const colunaAcoesCabecalho = podeEditar
+  const cabecalhoAcoes = podeEditar
     ? `<th class="col-acoes">Ações</th>`
     : "";
 
@@ -304,7 +315,7 @@ function montarTabela(categoria, pessoas) {
       ? `<div class="cargo-pessoa">${escaparHtml(pessoa.cargo)}</div>`
       : `<div class="cargo-vazio">Sem função informada</div>`;
 
-    const colunaAcoesLinha = podeEditar
+    const colunaAcoes = podeEditar
       ? `
         <td class="col-acoes">
           <div class="acoes-botoes">
@@ -347,7 +358,7 @@ function montarTabela(categoria, pessoas) {
           <span class="tag-tipo">${escaparHtml(pessoa.tipo || "Fone")}</span>
         </td>
 
-        ${colunaAcoesLinha}
+        ${colunaAcoes}
       </tr>
     `;
   }).join("");
@@ -361,7 +372,7 @@ function montarTabela(categoria, pessoas) {
             <th class="col-nome">Nome</th>
             <th class="col-cargo">Função / Cargo</th>
             <th class="col-tipo">Tipo</th>
-            ${colunaAcoesCabecalho}
+            ${cabecalhoAcoes}
           </tr>
         </thead>
 
@@ -374,7 +385,7 @@ function montarTabela(categoria, pessoas) {
 }
 
 // ===============================
-// CLIQUES NA ÁREA DOS RAMAIS
+// CLIQUES
 // ===============================
 
 areaRamais.addEventListener("click", evento => {
@@ -393,32 +404,22 @@ areaRamais.addEventListener("click", evento => {
     return;
   }
 
-  if (acao === "adicionar") {
-    if (!podeEditar) {
-      mostrarToast("Você não tem permissão para adicionar.");
-      return;
-    }
+  if (!podeEditar) {
+    mostrarToast("Entre na área de edição para alterar.");
+    return;
+  }
 
+  if (acao === "adicionar") {
     abrirModalAdicionarPessoa(categoria);
     return;
   }
 
   if (acao === "editar") {
-    if (!podeEditar) {
-      mostrarToast("Você não tem permissão para editar.");
-      return;
-    }
-
     abrirModalEditarPessoa(categoria, id);
     return;
   }
 
   if (acao === "excluir") {
-    if (!podeEditar) {
-      mostrarToast("Você não tem permissão para excluir.");
-      return;
-    }
-
     excluirPessoa(categoria, id);
     return;
   }
@@ -430,7 +431,7 @@ areaRamais.addEventListener("click", evento => {
 
 btnAdicionarCategoria.addEventListener("click", () => {
   if (!podeEditar) {
-    mostrarToast("Você não tem permissão para criar categorias.");
+    mostrarToast("Entre na área de edição para criar categorias.");
     return;
   }
 
@@ -445,7 +446,7 @@ btnCancelarCategoria.addEventListener("click", () => {
 
 btnSalvarCategoria.addEventListener("click", () => {
   if (!podeEditar) {
-    mostrarToast("Você não tem permissão para salvar categorias.");
+    mostrarToast("Sem permissão para salvar.");
     return;
   }
 
@@ -474,14 +475,14 @@ btnSalvarCategoria.addEventListener("click", () => {
   }).then(() => {
     registrarUltimaAtualizacao();
     modalCategoria.classList.remove("aberto");
-    mostrarToast("Categoria criada com sucesso.");
+    mostrarToast("Categoria criada.");
   }).catch(() => {
-    mostrarToast("Erro: sem permissão para criar categoria.");
+    mostrarToast("Erro: sem permissão.");
   });
 });
 
 // ===============================
-// PESSOAS / RAMAIS
+// PESSOAS
 // ===============================
 
 function abrirModalAdicionarPessoa(categoria) {
@@ -531,7 +532,7 @@ btnCancelarPessoa.addEventListener("click", () => {
 
 btnSalvarPessoa.addEventListener("click", () => {
   if (!podeEditar) {
-    mostrarToast("Você não tem permissão para salvar ramais.");
+    mostrarToast("Sem permissão para salvar.");
     return;
   }
 
@@ -568,14 +569,14 @@ btnSalvarPessoa.addEventListener("click", () => {
     registrarUltimaAtualizacao();
 
     if (pessoaId) {
-      mostrarToast("Ramal atualizado com sucesso.");
+      mostrarToast("Ramal atualizado.");
     } else {
-      mostrarToast("Ramal adicionado com sucesso.");
+      mostrarToast("Ramal adicionado.");
     }
 
     modalPessoa.classList.remove("aberto");
   }).catch(() => {
-    mostrarToast("Erro: sem permissão para salvar.");
+    mostrarToast("Erro: sem permissão.");
   });
 });
 
@@ -593,7 +594,7 @@ function excluirPessoa(categoria, pessoaId) {
     registrarUltimaAtualizacao();
     mostrarToast("Ramal excluído.");
   }).catch(() => {
-    mostrarToast("Erro: sem permissão para excluir.");
+    mostrarToast("Erro: sem permissão.");
   });
 }
 
