@@ -295,22 +295,29 @@ select:focus {
   color: white;
   padding: 4px 7px;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   gap: 10px;
   min-height: 28px;
+  position: relative;
 }
 
 .categoria-topo h2 {
   margin: 0;
   font-size: 16px;
   font-weight: bold;
+  text-align: center;
+  width: 100%;
 }
 
 .categoria-acoes {
   display: flex;
   gap: 5px;
   align-items: center;
+  position: absolute;
+  right: 7px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .conteudo-categoria {
