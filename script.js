@@ -232,17 +232,19 @@ function renderizarRamais() {
     const pessoas = converterParaArray(pessoasObj);
 
     const pessoasFiltradas = pessoas.filter(pessoa => {
-      const texto = `
-        ${pessoa.nome || ""}
-        ${pessoa.ramal || ""}
-        ${pessoa.cargo || ""}
-        ${pessoa.tipo || ""}
-        ${pessoa.observacao || ""}
-        ${categoria}
-      `.toLowerCase();
+  const texto = removerAcentos(`
+    ${pessoa.nome || ""}
+    ${pessoa.ramal || ""}
+    ${pessoa.cargo || ""}
+    ${pessoa.tipo || ""}
+    ${pessoa.observacao || ""}
+    ${categoria}
+  `);
 
-      return texto.includes(termoBusca.toLowerCase());
-    });
+  const busca = removerAcentos(termoBusca);
+
+  return texto.includes(busca);
+});
 
     if (termoBusca && pessoasFiltradas.length === 0) {
       return;
