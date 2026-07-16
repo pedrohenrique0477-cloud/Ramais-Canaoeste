@@ -37,28 +37,66 @@ let podeEditar = false;
 const areaRamais = document.getElementById("areaRamais");
 const campoBusca = document.getElementById("campoBusca");
 
-const btnAdicionarCategoria = document.getElementById("btnAdicionarCategoria");
+const btnAdicionarCategoria = document.getElementById(
+  "btnAdicionarCategoria"
+);
+
 const modalCategoria = document.getElementById("modalCategoria");
-const nomeNovaCategoria = document.getElementById("nomeNovaCategoria");
-const btnCancelarCategoria = document.getElementById("btnCancelarCategoria");
-const btnSalvarCategoria = document.getElementById("btnSalvarCategoria");
+const nomeNovaCategoria = document.getElementById(
+  "nomeNovaCategoria"
+);
+
+const btnCancelarCategoria = document.getElementById(
+  "btnCancelarCategoria"
+);
+
+const btnSalvarCategoria = document.getElementById(
+  "btnSalvarCategoria"
+);
 
 const modalPessoa = document.getElementById("modalPessoa");
-const tituloModalPessoa = document.getElementById("tituloModalPessoa");
+
+const tituloModalPessoa = document.getElementById(
+  "tituloModalPessoa"
+);
+
 const categoriaAtual = document.getElementById("categoriaAtual");
 const pessoaIdAtual = document.getElementById("pessoaIdAtual");
+
 const campoNome = document.getElementById("campoNome");
 const campoRamal = document.getElementById("campoRamal");
 const campoCargo = document.getElementById("campoCargo");
-const campoCategoriaTexto = document.getElementById("campoCategoriaTexto");
-const campoTipo = document.getElementById("campoTipo");
-const campoObservacao = document.getElementById("campoObservacao");
-const btnCancelarPessoa = document.getElementById("btnCancelarPessoa");
-const btnSalvarPessoa = document.getElementById("btnSalvarPessoa");
 
-const btnExpandirTudo = document.getElementById("btnExpandirTudo");
-const btnRecolherTudo = document.getElementById("btnRecolherTudo");
-const ultimaAtualizacao = document.getElementById("ultimaAtualizacao");
+const campoCategoriaTexto = document.getElementById(
+  "campoCategoriaTexto"
+);
+
+const campoTipo = document.getElementById("campoTipo");
+
+const campoObservacao = document.getElementById(
+  "campoObservacao"
+);
+
+const btnCancelarPessoa = document.getElementById(
+  "btnCancelarPessoa"
+);
+
+const btnSalvarPessoa = document.getElementById(
+  "btnSalvarPessoa"
+);
+
+const btnExpandirTudo = document.getElementById(
+  "btnExpandirTudo"
+);
+
+const btnRecolherTudo = document.getElementById(
+  "btnRecolherTudo"
+);
+
+const ultimaAtualizacao = document.getElementById(
+  "ultimaAtualizacao"
+);
+
 const toast = document.getElementById("toast");
 
 const btnLogin = document.getElementById("btnLogin");
@@ -66,36 +104,55 @@ const btnLogout = document.getElementById("btnLogout");
 const statusUsuario = document.getElementById("statusUsuario");
 
 const modalLogin = document.getElementById("modalLogin");
-const campoEmailLogin = document.getElementById("campoEmailLogin");
-const campoSenhaLogin = document.getElementById("campoSenhaLogin");
-const btnCancelarLogin = document.getElementById("btnCancelarLogin");
-const btnEntrarLogin = document.getElementById("btnEntrarLogin");
+
+const campoEmailLogin = document.getElementById(
+  "campoEmailLogin"
+);
+
+const campoSenhaLogin = document.getElementById(
+  "campoSenhaLogin"
+);
+
+const btnCancelarLogin = document.getElementById(
+  "btnCancelarLogin"
+);
+
+const btnEntrarLogin = document.getElementById(
+  "btnEntrarLogin"
+);
 
 // ===============================
 // LOGIN E PERMISSÃO
 // ===============================
 
-auth.onAuthStateChanged(user => {
+auth.onAuthStateChanged(usuario => {
   podeEditar = false;
 
-  if (!user) {
+  if (!usuario) {
     aplicarModoConsulta();
     return;
   }
 
-  editoresRef.child(user.uid).once("value").then(snapshot => {
-    podeEditar = snapshot.val() === true;
+  editoresRef
+    .child(usuario.uid)
+    .once("value")
+    .then(snapshot => {
+      podeEditar = snapshot.val() === true;
 
-    if (podeEditar) {
-      aplicarModoEditor(user.email);
-    } else {
-      auth.signOut();
+      if (podeEditar) {
+        aplicarModoEditor(usuario.email);
+      } else {
+        auth.signOut();
+        aplicarModoConsulta();
+        mostrarToast("Usuário sem permissão para editar.");
+      }
+
+      renderizarRamais();
+    })
+    .catch(erro => {
+      console.error("Erro ao verificar permissão:", erro);
       aplicarModoConsulta();
-      mostrarToast("Usuário sem permissão para editar.");
-    }
-
-    renderizarRamais();
-  });
+    });
 });
 
 function aplicarModoEditor(email) {
@@ -129,6 +186,7 @@ function aplicarModoConsulta() {
 btnLogin.addEventListener("click", () => {
   campoEmailLogin.value = "";
   campoSenhaLogin.value = "";
+
   modalLogin.classList.add("aberto");
   campoEmailLogin.focus();
 });
@@ -154,31 +212,41 @@ function fazerLogin() {
     return;
   }
 
-  auth.signInWithEmailAndPassword(email, senha)
+  auth
+    .signInWithEmailAndPassword(email, senha)
     .then(() => {
       modalLogin.classList.remove("aberto");
       mostrarToast("Login realizado.");
     })
-    .catch(error => {
-      console.error("Erro no login:", error.code, error.message);
+    .catch(erro => {
+      console.error(
+        "Erro no login:",
+        erro.code,
+        erro.message
+      );
 
-      if (error.code === "auth/invalid-credential" || error.code === "auth/wrong-password") {
+      if (
+        erro.code === "auth/invalid-credential" ||
+        erro.code === "auth/wrong-password"
+      ) {
         mostrarToast("E-mail ou senha incorretos.");
         return;
       }
 
-      if (error.code === "auth/user-not-found") {
+      if (erro.code === "auth/user-not-found") {
         mostrarToast("Usuário não encontrado.");
         return;
       }
 
-      if (error.code === "auth/invalid-email") {
+      if (erro.code === "auth/invalid-email") {
         mostrarToast("E-mail inválido.");
         return;
       }
 
-      if (error.code === "auth/too-many-requests") {
-        mostrarToast("Muitas tentativas. Aguarde um pouco.");
+      if (erro.code === "auth/too-many-requests") {
+        mostrarToast(
+          "Muitas tentativas. Aguarde um pouco."
+        );
         return;
       }
 
@@ -187,85 +255,132 @@ function fazerLogin() {
 }
 
 btnLogout.addEventListener("click", () => {
-  auth.signOut();
-  mostrarToast("Você saiu da edição.");
+  auth
+    .signOut()
+    .then(() => {
+      mostrarToast("Você saiu da edição.");
+    })
+    .catch(erro => {
+      console.error("Erro ao sair:", erro);
+      mostrarToast("Erro ao sair da edição.");
+    });
 });
 
 // ===============================
-// FIREBASE DADOS
+// RECEBER DADOS DO FIREBASE
 // ===============================
 
-ramaisRef.on("value", snapshot => {
-  dadosRamais = snapshot.val() || {};
-  renderizarRamais();
-});
+ramaisRef.on(
+  "value",
+  snapshot => {
+    dadosRamais = snapshot.val() || {};
+    renderizarRamais();
+  },
+  erro => {
+    console.error("Erro ao carregar ramais:", erro);
+
+    areaRamais.innerHTML = `
+      <p class="carregando">
+        Não foi possível carregar os ramais.
+      </p>
+    `;
+  }
+);
 
 atualizacaoRef.on("value", snapshot => {
   const data = snapshot.val();
 
   if (!data) {
-    ultimaAtualizacao.innerHTML = "Última atualização: ainda não registrada";
+    ultimaAtualizacao.innerHTML =
+      "Última atualização: ainda não registrada";
+
     return;
   }
 
-  ultimaAtualizacao.innerHTML = `Última atualização: <strong>${formatarDataHora(data)}</strong>`;
+  ultimaAtualizacao.innerHTML = `
+    Última atualização:
+    <strong>${formatarDataHora(data)}</strong>
+  `;
 });
 
 // ===============================
-// RENDERIZAÇÃO
+// RENDERIZAÇÃO DOS RAMAIS
 // ===============================
 
 function renderizarRamais() {
-  areaRamais.innerHTML = "";
-
-  const categorias = Object.keys(dadosRamais);
-
-  if (categorias.length === 0) {
-    areaRamais.innerHTML = `<p class="carregando">Nenhuma categoria cadastrada.</p>`;
+  if (!areaRamais) {
     return;
   }
 
-  const categoriasOrdenadas = ordenarCategorias(categorias);
+  areaRamais.innerHTML = "";
+
+  const categorias = Object.keys(dadosRamais || {});
+
+  if (categorias.length === 0) {
+    areaRamais.innerHTML = `
+      <p class="carregando">
+        Nenhuma categoria cadastrada.
+      </p>
+    `;
+
+    return;
+  }
+
+  const categoriasOrdenadas =
+    ordenarCategorias(categorias);
 
   categoriasOrdenadas.forEach(categoria => {
     const pessoasObj = dadosRamais[categoria] || {};
     const pessoas = converterParaArray(pessoasObj);
 
+    const buscaNormalizada = removerAcentos(termoBusca);
+
     const pessoasFiltradas = pessoas.filter(pessoa => {
-  const texto = removerAcentos(`
-    ${pessoa.nome || ""}
-    ${pessoa.ramal || ""}
-    ${pessoa.cargo || ""}
-    ${pessoa.tipo || ""}
-    ${pessoa.observacao || ""}
-    ${categoria}
-  `);
+      const textoCompleto = `
+        ${pessoa.nome || ""}
+        ${pessoa.ramal || ""}
+        ${pessoa.cargo || ""}
+        ${pessoa.tipo || ""}
+        ${pessoa.observacao || ""}
+        ${categoria || ""}
+      `;
 
-  const busca = removerAcentos(termoBusca);
+      const textoNormalizado =
+        removerAcentos(textoCompleto);
 
-  return texto.includes(busca);
-});
+      return textoNormalizado.includes(buscaNormalizada);
+    });
 
-    if (termoBusca && pessoasFiltradas.length === 0) {
+    if (
+      buscaNormalizada &&
+      pessoasFiltradas.length === 0
+    ) {
       return;
     }
 
     const card = document.createElement("article");
+
     card.className = "card-categoria";
     card.id = criarIdCategoria(categoria);
 
-    if (categoria.toLowerCase() === "diretoria") {
+    if (
+      removerAcentos(categoria) === "diretoria"
+    ) {
       card.classList.add("diretoria");
     }
 
-    const recolhida = categoriasRecolhidas[categoria] === true;
-    const textoBotaoMostrar = recolhida ? "Mostrar" : "Ocultar";
+    const recolhida =
+      categoriasRecolhidas[categoria] === true;
+
+    const textoBotaoMostrar = recolhida
+      ? "Mostrar"
+      : "Ocultar";
 
     const botaoAdicionar = podeEditar
       ? `
-        <button 
-          class="btn-pequeno btn-adicionar-menor" 
-          data-acao="adicionar" 
+        <button
+          class="btn-pequeno btn-adicionar-menor"
+          data-acao="adicionar"
           data-categoria="${escaparHtml(categoria)}"
         >
           + Adicionar
@@ -278,9 +393,9 @@ function renderizarRamais() {
         <h2>${escaparHtml(categoria)}</h2>
 
         <div class="categoria-acoes">
-          <button 
-            class="btn-pequeno btn-mostrar-destaque" 
-            data-acao="alternar" 
+          <button
+            class="btn-pequeno btn-mostrar-destaque"
+            data-acao="alternar"
             data-categoria="${escaparHtml(categoria)}"
           >
             ${textoBotaoMostrar}
@@ -290,80 +405,119 @@ function renderizarRamais() {
         </div>
       </div>
 
-      <div class="conteudo-categoria" style="display: ${recolhida ? "none" : "block"}">
-        ${montarTabela(categoria, pessoasFiltradas)}
+      <div
+        class="conteudo-categoria"
+        style="display: ${recolhida ? "none" : "block"}"
+      >
+        ${montarTabela(
+          categoria,
+          pessoasFiltradas
+        )}
       </div>
     `;
 
     areaRamais.appendChild(card);
   });
 
-  if (areaRamais.innerHTML.trim() === "") {
-    areaRamais.innerHTML = `<p class="carregando">Nenhum ramal encontrado na pesquisa.</p>`;
+  if (areaRamais.children.length === 0) {
+    areaRamais.innerHTML = `
+      <p class="carregando">
+        Nenhum ramal encontrado na pesquisa.
+      </p>
+    `;
   }
 }
 
 function montarTabela(categoria, pessoas) {
   if (!pessoas || pessoas.length === 0) {
-    return `<p class="sem-registros">Nenhum ramal cadastrado nesta categoria.</p>`;
+    return `
+      <p class="sem-registros">
+        Nenhum ramal cadastrado nesta categoria.
+      </p>
+    `;
   }
 
   const cabecalhoAcoes = podeEditar
     ? `<th class="col-acoes">Ações</th>`
     : "";
 
-  const linhas = pessoas.map(pessoa => {
-    const cargo = pessoa.cargo
-      ? `<div class="cargo-pessoa">${escaparHtml(pessoa.cargo)}</div>`
-      : `<div class="cargo-vazio">Sem função informada</div>`;
-
-    const colunaAcoes = podeEditar
-      ? `
-        <td class="col-acoes">
-          <div class="acoes-botoes">
-            <button 
-              class="btn-editar" 
-              data-acao="editar" 
-              data-categoria="${escaparHtml(categoria)}" 
-              data-id="${escaparHtml(pessoa.id)}"
-            >
-              Editar
-            </button>
-
-            <button 
-              class="btn-perigo" 
-              data-acao="excluir" 
-              data-categoria="${escaparHtml(categoria)}" 
-              data-id="${escaparHtml(pessoa.id)}"
-            >
-              Excluir
-            </button>
+  const linhas = pessoas
+    .map(pessoa => {
+      const cargo = pessoa.cargo
+        ? `
+          <div class="cargo-pessoa">
+            ${escaparHtml(pessoa.cargo)}
           </div>
-        </td>
-      `
-      : "";
+        `
+        : `
+          <div class="cargo-vazio">
+            Sem função informada
+          </div>
+        `;
 
-    return `
-      <tr>
-        <td class="col-ramal">${escaparHtml(pessoa.ramal || "")}</td>
+      const observacao = pessoa.observacao
+        ? `
+          <div class="cargo-pessoa">
+            ${escaparHtml(pessoa.observacao)}
+          </div>
+        `
+        : "";
 
-        <td class="col-nome">
-          <div class="nome-pessoa">${escaparHtml(pessoa.nome || "")}</div>
-          ${pessoa.observacao ? `<div class="cargo-pessoa">${escaparHtml(pessoa.observacao)}</div>` : ""}
-        </td>
+      const colunaAcoes = podeEditar
+        ? `
+          <td class="col-acoes">
+            <div class="acoes-botoes">
+              <button
+                class="btn-editar"
+                data-acao="editar"
+                data-categoria="${escaparHtml(categoria)}"
+                data-id="${escaparHtml(pessoa.id)}"
+              >
+                Editar
+              </button>
 
-        <td class="col-cargo">
-          ${cargo}
-        </td>
+              <button
+                class="btn-perigo"
+                data-acao="excluir"
+                data-categoria="${escaparHtml(categoria)}"
+                data-id="${escaparHtml(pessoa.id)}"
+              >
+                Excluir
+              </button>
+            </div>
+          </td>
+        `
+        : "";
 
-        <td class="col-tipo">
-          <span class="tag-tipo">${escaparHtml(pessoa.tipo || "Fone")}</span>
-        </td>
+      return `
+        <tr>
+          <td class="col-ramal">
+            ${escaparHtml(pessoa.ramal || "")}
+          </td>
 
-        ${colunaAcoes}
-      </tr>
-    `;
-  }).join("");
+          <td class="col-nome">
+            <div class="nome-pessoa">
+              ${escaparHtml(pessoa.nome || "")}
+            </div>
+
+            ${observacao}
+          </td>
+
+          <td class="col-cargo">
+            ${cargo}
+          </td>
+
+          <td class="col-tipo">
+            <span class="tag-tipo">
+              ${escaparHtml(pessoa.tipo || "Fone")}
+            </span>
+          </td>
+
+          ${colunaAcoes}
+        </tr>
+      `;
+    })
+    .join("");
 
   return `
     <div class="tabela-wrapper">
@@ -372,8 +526,11 @@ function montarTabela(categoria, pessoas) {
           <tr>
             <th class="col-ramal">Ramal</th>
             <th class="col-nome">Nome</th>
-            <th class="col-cargo">Função / Cargo</th>
+            <th class="col-cargo">
+              Função / Cargo
+            </th>
             <th class="col-tipo">Tipo</th>
+
             ${cabecalhoAcoes}
           </tr>
         </thead>
@@ -387,7 +544,7 @@ function montarTabela(categoria, pessoas) {
 }
 
 // ===============================
-// CLIQUES
+// CLIQUES NOS BOTÕES DOS CARDS
 // ===============================
 
 areaRamais.addEventListener("click", evento => {
@@ -407,7 +564,10 @@ areaRamais.addEventListener("click", evento => {
   }
 
   if (!podeEditar) {
-    mostrarToast("Entre na área de edição para alterar.");
+    mostrarToast(
+      "Entre na área de edição para alterar."
+    );
+
     return;
   }
 
@@ -423,7 +583,6 @@ areaRamais.addEventListener("click", evento => {
 
   if (acao === "excluir") {
     excluirPessoa(categoria, id);
-    return;
   }
 });
 
@@ -433,7 +592,10 @@ areaRamais.addEventListener("click", evento => {
 
 btnAdicionarCategoria.addEventListener("click", () => {
   if (!podeEditar) {
-    mostrarToast("Entre na área de edição para criar categorias.");
+    mostrarToast(
+      "Entre na área de edição para criar categorias."
+    );
+
     return;
   }
 
@@ -445,6 +607,15 @@ btnAdicionarCategoria.addEventListener("click", () => {
 btnCancelarCategoria.addEventListener("click", () => {
   modalCategoria.classList.remove("aberto");
 });
+
+nomeNovaCategoria.addEventListener(
+  "keydown",
+  evento => {
+    if (evento.key === "Enter") {
+      btnSalvarCategoria.click();
+    }
+  }
+);
 
 btnSalvarCategoria.addEventListener("click", () => {
   if (!podeEditar) {
@@ -459,36 +630,61 @@ btnSalvarCategoria.addEventListener("click", () => {
     return;
   }
 
-  if (dadosRamais[nome]) {
+  const categoriaExistente = Object.keys(
+    dadosRamais
+  ).find(categoria => {
+    return (
+      removerAcentos(categoria) ===
+      removerAcentos(nome)
+    );
+  });
+
+  if (categoriaExistente) {
     mostrarToast("Essa categoria já existe.");
     return;
   }
 
-  ramaisRef.child(nome).set({
-    temporario: {
-      nome: "Temporário",
-      ramal: "000",
-      cargo: "",
-      tipo: "Fone",
-      observacao: ""
-    }
-  }).then(() => {
-    return ramaisRef.child(nome).child("temporario").remove();
-  }).then(() => {
-    registrarUltimaAtualizacao();
-    modalCategoria.classList.remove("aberto");
-    mostrarToast("Categoria criada.");
-  }).catch(() => {
-    mostrarToast("Erro: sem permissão.");
-  });
+  ramaisRef
+    .child(nome)
+    .set({
+      temporario: {
+        nome: "Temporário",
+        ramal: "000",
+        cargo: "",
+        tipo: "Fone",
+        observacao: ""
+      }
+    })
+    .then(() => {
+      return ramaisRef
+        .child(nome)
+        .child("temporario")
+        .remove();
+    })
+    .then(() => {
+      return registrarUltimaAtualizacao();
+    })
+    .then(() => {
+      modalCategoria.classList.remove("aberto");
+      mostrarToast("Categoria criada.");
+    })
+    .catch(erro => {
+      console.error(
+        "Erro ao criar categoria:",
+        erro
+      );
+
+      mostrarToast("Erro: sem permissão.");
+    });
 });
 
 // ===============================
-// PESSOAS
+// ADICIONAR E EDITAR RAMAIS
 // ===============================
 
 function abrirModalAdicionarPessoa(categoria) {
-  tituloModalPessoa.textContent = "Adicionar ramal";
+  tituloModalPessoa.textContent =
+    "Adicionar ramal";
 
   categoriaAtual.value = categoria;
   pessoaIdAtual.value = "";
@@ -504,15 +700,21 @@ function abrirModalAdicionarPessoa(categoria) {
   campoNome.focus();
 }
 
-function abrirModalEditarPessoa(categoria, pessoaId) {
-  const pessoa = dadosRamais[categoria] && dadosRamais[categoria][pessoaId];
+function abrirModalEditarPessoa(
+  categoria,
+  pessoaId
+) {
+  const pessoa =
+    dadosRamais[categoria] &&
+    dadosRamais[categoria][pessoaId];
 
   if (!pessoa) {
     mostrarToast("Ramal não encontrado.");
     return;
   }
 
-  tituloModalPessoa.textContent = "Editar ramal";
+  tituloModalPessoa.textContent =
+    "Editar ramal";
 
   categoriaAtual.value = categoria;
   pessoaIdAtual.value = pessoaId;
@@ -522,7 +724,8 @@ function abrirModalEditarPessoa(categoria, pessoaId) {
   campoCargo.value = pessoa.cargo || "";
   campoCategoriaTexto.value = categoria;
   campoTipo.value = pessoa.tipo || "Fone";
-  campoObservacao.value = pessoa.observacao || "";
+  campoObservacao.value =
+    pessoa.observacao || "";
 
   modalPessoa.classList.add("aberto");
   campoNome.focus();
@@ -549,55 +752,87 @@ btnSalvarPessoa.addEventListener("click", () => {
     observacao: campoObservacao.value.trim()
   };
 
+  if (!categoria) {
+    mostrarToast("Categoria não encontrada.");
+    return;
+  }
+
   if (!pessoa.nome) {
     mostrarToast("Digite o nome.");
+    campoNome.focus();
     return;
   }
 
   if (!pessoa.ramal) {
     mostrarToast("Digite o ramal.");
+    campoRamal.focus();
     return;
   }
 
   let acaoFirebase;
 
   if (pessoaId) {
-    acaoFirebase = ramaisRef.child(categoria).child(pessoaId).update(pessoa);
+    acaoFirebase = ramaisRef
+      .child(categoria)
+      .child(pessoaId)
+      .update(pessoa);
   } else {
-    acaoFirebase = ramaisRef.child(categoria).push(pessoa);
+    acaoFirebase = ramaisRef
+      .child(categoria)
+      .push(pessoa);
   }
 
-  acaoFirebase.then(() => {
-    registrarUltimaAtualizacao();
+  acaoFirebase
+    .then(() => {
+      return registrarUltimaAtualizacao();
+    })
+    .then(() => {
+      modalPessoa.classList.remove("aberto");
 
-    if (pessoaId) {
-      mostrarToast("Ramal atualizado.");
-    } else {
-      mostrarToast("Ramal adicionado.");
-    }
-
-    modalPessoa.classList.remove("aberto");
-  }).catch(() => {
-    mostrarToast("Erro: sem permissão.");
-  });
+      if (pessoaId) {
+        mostrarToast("Ramal atualizado.");
+      } else {
+        mostrarToast("Ramal adicionado.");
+      }
+    })
+    .catch(erro => {
+      console.error("Erro ao salvar ramal:", erro);
+      mostrarToast("Erro: sem permissão.");
+    });
 });
 
 function excluirPessoa(categoria, pessoaId) {
-  const pessoa = dadosRamais[categoria] && dadosRamais[categoria][pessoaId];
-  const nome = pessoa && pessoa.nome ? pessoa.nome : "este ramal";
+  const pessoa =
+    dadosRamais[categoria] &&
+    dadosRamais[categoria][pessoaId];
 
-  const confirmar = confirm(`Tem certeza que deseja excluir ${nome}?`);
+  const nome =
+    pessoa && pessoa.nome
+      ? pessoa.nome
+      : "este ramal";
+
+  const confirmar = window.confirm(
+    `Tem certeza que deseja excluir ${nome}?`
+  );
 
   if (!confirmar) {
     return;
   }
 
-  ramaisRef.child(categoria).child(pessoaId).remove().then(() => {
-    registrarUltimaAtualizacao();
-    mostrarToast("Ramal excluído.");
-  }).catch(() => {
-    mostrarToast("Erro: sem permissão.");
-  });
+  ramaisRef
+    .child(categoria)
+    .child(pessoaId)
+    .remove()
+    .then(() => {
+      return registrarUltimaAtualizacao();
+    })
+    .then(() => {
+      mostrarToast("Ramal excluído.");
+    })
+    .catch(erro => {
+      console.error("Erro ao excluir ramal:", erro);
+      mostrarToast("Erro: sem permissão.");
+    });
 }
 
 // ===============================
@@ -610,7 +845,9 @@ campoBusca.addEventListener("input", () => {
 });
 
 function alternarCategoria(categoria) {
-  categoriasRecolhidas[categoria] = !categoriasRecolhidas[categoria];
+  categoriasRecolhidas[categoria] =
+    !categoriasRecolhidas[categoria];
+
   renderizarRamais();
 }
 
@@ -628,61 +865,93 @@ btnRecolherTudo.addEventListener("click", () => {
 });
 
 // ===============================
-// UTILITÁRIOS
+// FUNÇÕES UTILITÁRIAS
 // ===============================
 
-function converterParaArray(obj) {
-  if (Array.isArray(obj)) {
-    return obj
+function converterParaArray(objeto) {
+  if (Array.isArray(objeto)) {
+    return objeto
       .filter(item => item && item.nome)
-      .map((item, index) => ({
-        id: String(index),
+      .map((item, indice) => ({
+        id: String(indice),
         ...item
       }));
   }
 
-  return Object.keys(obj || {})
-    .filter(id => obj[id] && obj[id].nome)
+  return Object.keys(objeto || {})
+    .filter(id => {
+      return objeto[id] && objeto[id].nome;
+    })
     .map(id => ({
       id,
-      ...obj[id]
+      ...objeto[id]
     }));
 }
 
 function ordenarCategorias(categorias) {
-  return categorias.sort((a, b) => {
-    const categoriaA = a.toLowerCase();
-    const categoriaB = b.toLowerCase();
+  return [...categorias].sort((a, b) => {
+    const categoriaA = removerAcentos(a);
+    const categoriaB = removerAcentos(b);
 
-    if (categoriaA === "diretoria") return -1;
-    if (categoriaB === "diretoria") return 1;
+    if (categoriaA === "diretoria") {
+      return -1;
+    }
 
-    if (categoriaA === "departamento técnico") return 1;
-    if (categoriaB === "departamento técnico") return -1;
+    if (categoriaB === "diretoria") {
+      return 1;
+    }
 
-    return a.localeCompare(b, "pt-BR");
+    if (
+      categoriaA === "departamento tecnico"
+    ) {
+      return 1;
+    }
+
+    if (
+      categoriaB === "departamento tecnico"
+    ) {
+      return -1;
+    }
+
+    return a.localeCompare(b, "pt-BR", {
+      sensitivity: "base"
+    });
   });
 }
 
-function criarIdCategoria(categoria) {
-  return "categoria-" + categoria
+// Esta função faz a pesquisa ignorar acentos.
+// Exemplo: Julia encontra Júlia.
+// Exemplo: Joao encontra João.
+
+function removerAcentos(texto) {
+  return String(texto || "")
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, "-");
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
+function criarIdCategoria(categoria) {
+  return (
+    "categoria-" +
+    removerAcentos(categoria)
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+  );
 }
 
 function mostrarToast(mensagem) {
   toast.textContent = mensagem;
   toast.classList.add("mostrar");
 
-  setTimeout(() => {
+  clearTimeout(mostrarToast.tempo);
+
+  mostrarToast.tempo = setTimeout(() => {
     toast.classList.remove("mostrar");
   }, 2500);
 }
 
 function escaparHtml(texto) {
-  return String(texto)
+  return String(texto || "")
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
@@ -698,6 +967,10 @@ function registrarUltimaAtualizacao() {
 function formatarDataHora(dataISO) {
   const data = new Date(dataISO);
 
+  if (Number.isNaN(data.getTime())) {
+    return "data inválida";
+  }
+
   return data.toLocaleString("pt-BR", {
     day: "2-digit",
     month: "2-digit",
@@ -711,20 +984,43 @@ function formatarDataHora(dataISO) {
 // FECHAR MODAIS CLICANDO FORA
 // ===============================
 
-modalCategoria.addEventListener("click", evento => {
-  if (evento.target === modalCategoria) {
-    modalCategoria.classList.remove("aberto");
+modalCategoria.addEventListener(
+  "click",
+  evento => {
+    if (evento.target === modalCategoria) {
+      modalCategoria.classList.remove("aberto");
+    }
   }
-});
+);
 
-modalPessoa.addEventListener("click", evento => {
-  if (evento.target === modalPessoa) {
-    modalPessoa.classList.remove("aberto");
+modalPessoa.addEventListener(
+  "click",
+  evento => {
+    if (evento.target === modalPessoa) {
+      modalPessoa.classList.remove("aberto");
+    }
   }
-});
+);
 
-modalLogin.addEventListener("click", evento => {
-  if (evento.target === modalLogin) {
-    modalLogin.classList.remove("aberto");
+modalLogin.addEventListener(
+  "click",
+  evento => {
+    if (evento.target === modalLogin) {
+      modalLogin.classList.remove("aberto");
+    }
   }
+);
+
+// ===============================
+// FECHAR MODAIS COM ESC
+// ===============================
+
+document.addEventListener("keydown", evento => {
+  if (evento.key !== "Escape") {
+    return;
+  }
+
+  modalLogin.classList.remove("aberto");
+  modalCategoria.classList.remove("aberto");
+  modalPessoa.classList.remove("aberto");
 });

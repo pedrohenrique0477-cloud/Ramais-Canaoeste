@@ -663,10 +663,3 @@ body:not(.modo-editor) .col-tipo {
 .tabela-ramais tbody tr:hover td {
   background: #c2dcd8;
 }
-
-function removerAcentos(texto) {
-  return String(texto)
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
-}
