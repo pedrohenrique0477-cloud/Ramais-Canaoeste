@@ -726,10 +726,3 @@ modalLogin.addEventListener("click", evento => {
     modalLogin.classList.remove("aberto");
   }
 });
-const btnImprimir = document.getElementById("btnImprimir");
-
-if (btnImprimir) {
-  btnImprimir.addEventListener("click", () => {
-    window.print();
-  });
-}
